@@ -1,0 +1,6 @@
+{
+	"pack":{
+		"pack_format":1,
+		"description":"Global Datapack - using Dark Roleplays, Global Datapack mod"
+	}
+}
