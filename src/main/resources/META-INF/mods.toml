@@ -1,21 +1,11 @@
-modLoader="javafml" #mandatory
-loaderVersion="[25,)" #mandatory (24 is current forge version)
+modLoader="javafml"
+loaderVersion="[28,)"
 issueTrackerURL="https://minecraft.curseforge.com/projects/drp-global-datapack/issues"
 
-[[mods]] #mandatory
-	modId="drpglobaldatapack"
-	version="${file.jarVersion}"
+[[mods]]
+	modId="globaldatapack"
+	version="${version}"
 	displayName="Dark Roleplay - Global Datapacks"
 	displayURL="https://minecraft.curseforge.com/projects/drp-global-datapack"
 	authors="JTK222"
-	description='''
-This is just a small utility mod for Modpacks.
-By default datapacks can only be added to specific worlds, but not globally.
-This mod adds a global datapack.
-'''
-[[dependencies.drpglobaldatapack]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.13.2]"
-    ordering="NONE"
-    side="BOTH"
+	description='''Allows modpacks to add Datapacks'''
