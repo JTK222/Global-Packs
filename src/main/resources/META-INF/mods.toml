@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[28,)"
+loaderVersion="[31,)"
 issueTrackerURL="https://minecraft.curseforge.com/projects/drp-global-datapack/issues"
 
 [[mods]]
@@ -9,3 +9,17 @@ issueTrackerURL="https://minecraft.curseforge.com/projects/drp-global-datapack/i
 	displayURL="https://minecraft.curseforge.com/projects/drp-global-datapack"
 	authors="JTK222"
 	description='''Allows modpacks to add Datapacks'''
+
+[[dependencies.globaldatapack]] #optional
+modId="forge" #mandatory
+mandatory=true #mandatory
+versionRange="[31,)" #mandatory
+ordering="NONE" #BEFORE or AFTER, only used when dep is not mandatory
+side="BOTH" #BOTH, CLIENT, SERVER
+
+[[dependencies.globaldatapack]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.15,)"
+ordering="NONE"
+side="BOTH"
