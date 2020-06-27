@@ -1,1 +1,1 @@
-* Upped the version to prevent binary equality to the previous 1.14 version
+* Updated to 1.16
