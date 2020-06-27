@@ -8,45 +8,51 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
-version = '1.14.4-1.2'
-group = 'net.dark-roleplay'
+plugins {
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'idea'
+    id 'maven-publish'
+}
+
+//The Plugin block only works for plugins in the gradle maven
+apply plugin: 'net.minecraftforge.gradle'
+
+version = "${MC_VERSION}-${MOD_VERSION}"
+group = 'net.dark_roleplay'
 archivesBaseName = 'globaldatapack'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
-
-apply from: 'https://dark-roleplay.net/files/gradle_helpers/1.14.3/launch_configs.php?modid=globaldatapack'
-
 minecraft {
-    mappings channel: 'snapshot', version: '20190704-1.14.3'
-
+    mappings channel: 'snapshot', version: '20200229-1.15.1'
     runs {
         client {
-            workingDirectory project.file('runs/run')
-            property 'forge.logging.markers', ''
+            workingDirectory project.file('runs/client')
             property 'forge.logging.console.level', 'debug'
-            mods {
-                globaldatapack { source sourceSets.main }
-            }
+
+            environment 'MOD_CLASSES',
+                    "archivesBaseName%%${project.file('out/production/resources').canonicalPath};" +
+                            "archivesBaseName%%${project.file('out/production/classes').canonicalPath}"
         }
+
         server {
-            workingDirectory project.file('runs/run_server')
-            property 'forge.logging.markers', ''
+            workingDirectory project.file('runs/server')
             property 'forge.logging.console.level', 'debug'
-            mods {
-                globaldatapack { source sourceSets.main }
-            }
+
+            environment 'MOD_CLASSES',
+                    "archivesBaseName%%${project.file('out/production/resources').canonicalPath};" +
+                            "archivesBaseName%%${project.file('out/production/classes').canonicalPath}"
         }
     }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.0.14'
+    minecraft([
+        group   : 'net.minecraftforge',
+        name    : 'forge',
+        version : "${MC_VERSION}-${FORGE_VERSION}"
+    ])
 }
 
 jar {
@@ -63,7 +69,80 @@ jar {
     }
 }
 
-apply from: 'https://dark-roleplay.net/files/gradle_helpers/1.14.2/mods_toml.gradle'
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
 
-// Publishing
-apply from: 'https://dark-roleplay.net/files/gradle_helpers/1.14.2/publishing.gradle'
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+
+        expand 'version': project.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'META-INF/mods.toml'
+    }
+}
+
+idea {
+    module {
+        for (String excludeDirName in ["run", "out", "runs", ".github", ".idea", "gradle"]) {
+            File excludeDir = new File(projectDir, excludeDirName)
+            excludeDirs.add(excludeDir)
+        }
+    }
+}
+
+curseforge {
+    apiKey = System.getenv('CURSE_API_KEY') // This should really be in a gradle.properties file
+    project {
+        id = '317134'
+        changelog = file('changelog.txt') // A file can also be set using: changelog = file('changelog.txt')
+        releaseType = 'release'
+        mainArtifact(jar) {
+            displayName = "Global Data Pack - ${MC_VERSION} - v${MOD_VERSION}"
+        }
+    }
+}
+
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) {
+    type 'jar'
+    builtBy 'reobfJar'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
+
+            artifact reobfArtifact
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+    repositories {
+        maven {
+            url System.getenv("MVN_REPO")
+            credentials {
+                username System.getenv("MVN_USER")
+                password System.getenv("MVN_PASSWORD")
+            }
+        }
+    }
+}

@@ -12,20 +12,22 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 
 @Mod("globaldatapack")
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid="globaldatapack")
 public final class DarkRoleplayGlobalDatapack {
 
 	@SubscribeEvent
-	public void serverStarting(FMLServerAboutToStartEvent event) {
+	public static void serverStarting(FMLServerAboutToStartEvent event) {
+
 		event.getServer().getResourcePacks().addPackFinder(new IPackFinder() {
 			@Override
 			public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> nameToPackMap, ResourcePackInfo.IFactory<T> packInfoFactory) {
-				File globalDatapacks = new File("./global_data_packs/");
+				File globalDatapacks = event.getServer().getFile("global_data_pack");
+
 				globalDatapacks.mkdirs();
 				if(globalDatapacks.exists() && globalDatapacks.isDirectory()) {
 					for (File file : globalDatapacks.listFiles()) {
 						if (!file.isDirectory() && !file.getName().endsWith(".zip")) continue;
-						T t = ResourcePackInfo.createResourcePack("modpack:" + file.getName(), false, () -> file.isDirectory() ? new FolderPack(file) : new FilePack(file), packInfoFactory, ResourcePackInfo.Priority.BOTTOM);
+						T t = ResourcePackInfo.createResourcePack("modpack:" + file.getName(), false, () -> file.isDirectory() ? new FolderPack(file) : new FilePack(file), packInfoFactory, ResourcePackInfo.Priority.TOP);
 						if (t == null) continue;
 						nameToPackMap.put("modpack:" + file.getName(), t);
 					}
