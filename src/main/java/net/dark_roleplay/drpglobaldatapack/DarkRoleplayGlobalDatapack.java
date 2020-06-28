@@ -28,7 +28,7 @@ public final class DarkRoleplayGlobalDatapack {
 				if(globalDatapacks.exists() && globalDatapacks.isDirectory()) {
 					for (File file : globalDatapacks.listFiles()) {
 						if (!file.isDirectory() && !file.getName().endsWith(".zip")) continue;
-						T t = ResourcePackInfo.createResourcePack(file.getName(), false, () -> file.isDirectory() ? new FolderPack(file) : new FilePack(file), iFactory, ResourcePackInfo.Priority.TOP, text -> new TranslationTextComponent("global_datapack.pack", text));
+						T t = ResourcePackInfo.createResourcePack(file.getName(), true, () -> file.isDirectory() ? new FolderPack(file) : new FilePack(file), iFactory, ResourcePackInfo.Priority.TOP, text -> new TranslationTextComponent("global_datapack.pack", text));
 						if (t == null) continue;
 						consumer.accept(t);
 					}
