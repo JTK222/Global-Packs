@@ -1,1 +1,2 @@
-* Updated to 1.16
+* Datapacks will now be force enabled, as players would need to enable them by hand otherwise.
+This causes forge to treat this as a mod datapack, and prevents disabling it, even though it's low priority, I'll try to fix this.
