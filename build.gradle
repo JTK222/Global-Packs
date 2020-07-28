@@ -26,6 +26,9 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 minecraft {
     mappings channel: 'snapshot', version: '20200707-1.16.1'
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
     runs {
         client {
             workingDirectory project.file('runs/client')
@@ -106,17 +109,17 @@ idea {
     }
 }
 
-curseforge {
-    apiKey = System.getenv('CURSE_API_KEY') // This should really be in a gradle.properties file
-    project {
-        id = '317134'
-        changelog = file('changelog.txt') // A file can also be set using: changelog = file('changelog.txt')
-        releaseType = 'release'
-        mainArtifact(jar) {
-            displayName = "Global Data Pack - ${MC_VERSION} - v${MOD_VERSION}"
-        }
-    }
-}
+//curseforge {
+//    apiKey = System.getenv('CURSE_API_KEY') // This should really be in a gradle.properties file
+//    project {
+//        id = '317134'
+//        changelog = file('changelog.txt') // A file can also be set using: changelog = file('changelog.txt')
+//        releaseType = 'release'
+//        mainArtifact(jar) {
+//            displayName = "Global Data Pack - ${MC_VERSION} - v${MOD_VERSION}"
+//        }
+//    }
+//}
 
 def reobfFile = file("$buildDir/reobfJar/output.jar")
 def reobfArtifact = artifacts.add('default', reobfFile) {
