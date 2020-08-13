@@ -1,25 +1,26 @@
 modLoader="javafml"
-loaderVersion="[32,)"
+loaderVersion="[33,)"
 issueTrackerURL="https://minecraft.curseforge.com/projects/drp-global-datapack/issues"
+license="ARR"
 
 [[mods]]
 	modId="globaldatapack"
 	version="${version}"
-	displayName="Dark Roleplay - Global Datapacks"
+	displayName="Global Datapacks"
 	displayURL="https://minecraft.curseforge.com/projects/drp-global-datapack"
 	authors="JTK222"
 	description='''Allows modpacks to add Datapacks'''
 
-[[dependencies.globaldatapack]] #optional
-modId="forge" #mandatory
-mandatory=true #mandatory
-versionRange="[32,)" #mandatory
-ordering="NONE" #BEFORE or AFTER, only used when dep is not mandatory
-side="BOTH" #BOTH, CLIENT, SERVER
+[[dependencies]]
+	modId="forge"
+	mandatory=true
+	versionRange="[33,)"
+	ordering="NONE"
+	side="BOTH"
 
-[[dependencies.globaldatapack]]
-modId="minecraft"
-mandatory=true
-versionRange="[1.16,)"
-ordering="NONE"
-side="BOTH"
+[[dependencies]]
+	modId="minecraft"
+	mandatory=true
+	versionRange="[1.16,)"
+	ordering="NONE"
+	side="BOTH"

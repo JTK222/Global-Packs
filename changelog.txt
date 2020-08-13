@@ -1,1 +1,2 @@
-* Fixed Datapacks not loading proplery unless /reload is used.
+(NOT COMPATIBLE WITH 1.16.1!)
+* Updated to 1.16.2 added license field in Mods file

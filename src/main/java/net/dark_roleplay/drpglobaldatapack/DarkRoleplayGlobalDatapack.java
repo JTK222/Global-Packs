@@ -23,14 +23,14 @@ public final class DarkRoleplayGlobalDatapack {
 
 		event.getServer().getResourcePacks().addPackFinder(new IPackFinder() {
 			@Override
-			public <T extends ResourcePackInfo> void func_230230_a_(Consumer<T> consumer, ResourcePackInfo.IFactory<T> iFactory) {
+			public void func_230230_a_(Consumer<ResourcePackInfo> consumer, ResourcePackInfo.IFactory iFactory) {
 				File globalDatapacks = event.getServer().getFile("global_data_pack");
 
 				globalDatapacks.mkdirs();
 				if(globalDatapacks.exists() && globalDatapacks.isDirectory()) {
 					for (File file : globalDatapacks.listFiles()) {
 						if (!file.isDirectory() && !file.getName().endsWith(".zip")) continue;
-						T t = ResourcePackInfo.createResourcePack(file.getName(), true, () -> file.isDirectory() ? new FolderPack(file) : new FilePack(file), iFactory, ResourcePackInfo.Priority.TOP, text -> new TranslationTextComponent("global_datapack.pack", text));
+						ResourcePackInfo t = ResourcePackInfo.createResourcePack(file.getName(), true, () -> file.isDirectory() ? new FolderPack(file) : new FilePack(file), iFactory, ResourcePackInfo.Priority.TOP, text -> new TranslationTextComponent("global_datapack.pack", text));
 						if (t == null) continue;
 						consumer.accept(t);
 					}
@@ -39,7 +39,7 @@ public final class DarkRoleplayGlobalDatapack {
 		});
 
 		//Util to load Datapacks
-		ResourcePackList<?> packs = event.getServer().getResourcePacks();
+		ResourcePackList packs = event.getServer().getResourcePacks();
 		packs.reloadPacksFromFinders();
 
 		IServerConfiguration serverConf = event.getServer().func_240793_aU_();
@@ -50,7 +50,7 @@ public final class DarkRoleplayGlobalDatapack {
 		event.getServer().func_240780_a_(collection1).exceptionally(exception -> null);
 	}
 
-	private static Collection<String> func_241058_a_(ResourcePackList<?> packs, IServerConfiguration serverConf, Collection<String> existingPacks) {
+	private static Collection<String> func_241058_a_(ResourcePackList packs, IServerConfiguration serverConf, Collection<String> existingPacks) {
 		Collection<String> collection = Lists.newArrayList(existingPacks);
 		Collection<String> collection1 = serverConf.func_230403_C_().func_234887_b_(); //Get active packs
 
