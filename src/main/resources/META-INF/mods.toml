@@ -6,7 +6,7 @@ license="ARR"
 [[mods]]
 	modId="globaldatapack"
 	version="${version}"
-	displayName="Global Datapacks"
+	displayName="Global Data- & Resourcepacks"
 	displayURL="https://minecraft.curseforge.com/projects/drp-global-datapack"
 	authors="JTK222"
 	description='''Allows modpacks to add Datapacks'''
