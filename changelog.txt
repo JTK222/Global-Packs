@@ -1,2 +1,7 @@
-(NOT COMPATIBLE WITH 1.16.1!)
-* Updated to 1.16.2 added license field in Mods file
+* Again compatible with 1.16.1
++ You can now also add resource packs to your modpacks.
+  They'll be force enabled just like datapacks.
+  Just create following folder: "global_resource_packs" and throw the resource packs in there.
+* The "global_data_pack" folder is now deprecated and will be replaced with "global_data_packs" in 1.17
+  You can already rename your folder, but you need to chose which one will be used.
+  The new folder will be created by default.
