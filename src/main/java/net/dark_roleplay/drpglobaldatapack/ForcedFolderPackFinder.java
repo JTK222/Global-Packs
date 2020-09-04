@@ -13,7 +13,7 @@ public class ForcedFolderPackFinder extends FolderPackFinder {
     }
 
     @Override
-    public void func_230230_a_(Consumer consumer, ResourcePackInfo.IFactory factory) {
+    public void func_230230_a_(Consumer<ResourcePackInfo> consumer, ResourcePackInfo.IFactory factory) {
         super.func_230230_a_(packInfo -> {
             packInfo.alwaysEnabled = true;
             consumer.accept(packInfo);
