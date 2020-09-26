@@ -20,7 +20,7 @@ apply plugin: 'net.minecraftforge.gradle'
 
 version = "${MC_VERSION}-${MOD_VERSION}"
 group = 'net.dark_roleplay'
-archivesBaseName = 'globaldatapack'
+archivesBaseName = 'globaldataandresourcepacks'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
@@ -32,6 +32,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('runs/client')
+            arg "-mixin.config="+archivesBaseName+".mixins.json"
             property 'forge.logging.console.level', 'debug'
 
             environment 'MOD_CLASSES',
@@ -41,6 +42,7 @@ minecraft {
 
         server {
             workingDirectory project.file('runs/server')
+            arg "-mixin.config="+archivesBaseName+".mixins.json"
             property 'forge.logging.console.level', 'debug'
 
             environment 'MOD_CLASSES',
@@ -61,13 +63,14 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "globaldatapack",
+            "Specification-Title": "globaldataandresourcepacks",
             "Specification-Vendor": "Dark Roleplay",
             "Specification-Version": "0.1",
-            "Implementation-Title": "Global Data Packs",
+            "Implementation-Title": "Global Data & Resourcepacks",
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"Dark Roleplay",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "MixinConfigs": "${modid}.mixins.json"
         ])
     }
 }
@@ -88,6 +91,9 @@ artifacts {
 }
 
 
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
 processResources {
     from(sourceSets.main.resources.srcDirs) {
         include 'META-INF/mods.toml'
@@ -97,6 +103,13 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         exclude 'META-INF/mods.toml'
+    }
+
+    // Minify json resources
+    doLast {
+        fileTree(dir: outputs.files.asPath, include: "**/*.json").each {
+            File file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+        }
     }
 }
 
