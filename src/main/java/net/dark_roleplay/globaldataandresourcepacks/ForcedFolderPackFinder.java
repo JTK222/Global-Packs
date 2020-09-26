@@ -1,4 +1,4 @@
-package net.dark_roleplay.drpglobaldatapack;
+package net.dark_roleplay.globaldataandresourcepacks;
 
 import net.minecraft.resources.FolderPackFinder;
 import net.minecraft.resources.IPackNameDecorator;
@@ -13,7 +13,7 @@ public class ForcedFolderPackFinder extends FolderPackFinder {
     }
 
     @Override
-    public void func_230230_a_(Consumer<ResourcePackInfo> consumer, ResourcePackInfo.IFactory factory) {
+    public void func_230230_a_(Consumer consumer, ResourcePackInfo.IFactory factory) {
         super.func_230230_a_(packInfo -> {
             packInfo.alwaysEnabled = true;
             consumer.accept(packInfo);

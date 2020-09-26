@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "net.dark_roleplay.globaldataandresourcepacks.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"refmap": "globaldataandresourcepacks.refmap.json",
+	"mixins": [
+		"MinecraftServerMixin"
+	],
+	"client": [
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"minVersion": "0.8"
+}
