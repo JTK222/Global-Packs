@@ -139,7 +139,7 @@ publishing {
 curseforge {
     apiKey = System.getenv('CURSE_API_KEY') // This should really be in a gradle.properties file
     project {
-        id = '360748'
+        id = '317134'
         changelog = file('changelog.txt') // A file can also be set using: changelog = file('changelog.txt')
         releaseType = 'beta'
         mainArtifact(jar) {
