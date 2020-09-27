@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[33,)"
+loaderVersion="[32,)"
 issueTrackerURL="https://minecraft.curseforge.com/projects/drp-global-datapack/issues"
 license="ARR"
 
@@ -14,7 +14,7 @@ license="ARR"
 [[dependencies]]
 	modId="forge"
 	mandatory=true
-	versionRange="[33,)"
+	versionRange="[32,)"
 	ordering="NONE"
 	side="BOTH"
 
