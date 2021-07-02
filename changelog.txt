@@ -1,1 +1,2 @@
-* Changed how Datapacks are registered, allowing experimental world gen features to work.
+v0.7.4
+* Data- & Resourcepack folder do now automatically get generated if missing.
