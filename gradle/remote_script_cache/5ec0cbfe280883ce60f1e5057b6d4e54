@@ -1,0 +1,32 @@
+apply plugin: 'maven-publish'
+
+if(project.hasProperty('maven_url')){
+    project.logger.lifecycle("Loading Maven publish module.")
+
+    jar.finalizedBy('reobfJar')
+    publishing {
+        publications {
+            artifactId project.archivesBaseName
+
+            mavenJava(MavenPublications){
+                artifact jar
+                artifact sourcesJar { classifier = 'sources' }
+                artifact javadocJar { classifier = 'javadoc' }
+            }
+        }
+
+        repositories {
+            maven {
+                url getRequiredString('maven_url')
+                if(project.hasProperty('maven_username') && project.hasProperty('maven_password')) {
+                    credentials {
+                        credentials {
+                            username findProperty('maven_username')
+                            password findProperty('maven_password')
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

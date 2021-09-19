@@ -1,0 +1,96 @@
+project.logger.lifecycle("Loading Forge project module.")
+
+buildscript {
+    repositories {
+        maven {
+            name = 'Official Forge Maven'
+            url = 'https://maven.minecraftforge.net'
+        }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: getDefaultString('fg_version', '5.1.+'), changing: true
+    }
+}
+
+apply plugin: net.minecraftforge.gradle.userdev.UserDevPlugin
+apply plugin: 'eclipse'
+
+// Configurable Forge Properties
+def forgeVersion = getRequiredString('forge_version')
+def loggingLevel = getDefaultString('forge_log_level', 'debug')
+def loggingANSI = getDefaultProperty('forge_log_ansi', true).asBoolean()
+def mappingChannel = getDefaultString('forge_mapping_channel', 'official')
+def mappingVersion = getDefaultString('forge_mapping_version', project.ext.mcVersion)
+
+archivesBaseName = "${mod_name}-${minecraft_version}"
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+
+minecraft {
+    mappings channel: mappingChannel, version: mappingVersion
+
+    runs {
+        client {
+            workingDirectory project.file('runs/client')
+
+            taskName modName.replaceAll("\\s","") + 'Client'
+
+            property 'forge.logging.console.level', loggingLevel
+            if(loggingANSI)
+                property 'terminal.ansi', 'true'
+
+            mods {
+                clientRun {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('runs/server')
+
+            taskName modName.replaceAll("\\s","") + 'Server'
+
+            property 'forge.logging.console.level', loggingLevel
+            if(loggingANSI)
+                property 'terminal.ansi', 'true'
+
+            mods {
+                serverRun {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${project.ext.mcVersion}-${forgeVersion}"
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(sourceSets.main.resources.srcDirs){
+        filesMatching(['META-INF/mods.toml', 'pack.mcmeta']){
+            expand project.properties
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes(['ModLoader': "forge-${forgeVersion}"])
+    }
+}
+
+//Tasks are renamed, third party tools may require those
+task runClient() {
+    description = 'Runs the game client in developer/debug mode.'
+    dependsOn modName.replaceAll("\\s","") + 'Client'
+}
+
+task runServer() {
+    description = 'Runs the game server in developer/debug mode.'
+    dependsOn modName.replaceAll("\\s","") + 'Server'
+}

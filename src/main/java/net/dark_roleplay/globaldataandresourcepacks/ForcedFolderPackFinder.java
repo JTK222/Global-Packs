@@ -1,15 +1,14 @@
 package net.dark_roleplay.globaldataandresourcepacks;
 
-import net.minecraft.resources.FolderPackFinder;
-import net.minecraft.resources.IPackNameDecorator;
-import net.minecraft.resources.ResourcePackInfo;
+import net.minecraft.server.packs.repository.FolderRepositorySource;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.function.Consumer;
 
-public class ForcedFolderPackFinder extends FolderPackFinder {
-    public ForcedFolderPackFinder(File file, IPackNameDecorator decorator) {
+public class ForcedFolderPackFinder extends FolderRepositorySource {
+    public ForcedFolderPackFinder(File file, PackSource decorator) {
         super(file, decorator);
 
         if(!file.exists())
@@ -17,9 +16,9 @@ public class ForcedFolderPackFinder extends FolderPackFinder {
     }
 
     @Override
-    public void findPacks(Consumer consumer, ResourcePackInfo.IFactory factory) {
-        super.findPacks(packInfo -> {
-            packInfo.alwaysEnabled = true;
+    public void loadPacks(Consumer<Pack> consumer, Pack.PackConstructor factory) {
+        super.loadPacks(packInfo -> {
+            packInfo.required = true;
             consumer.accept(packInfo);
         }, factory);
     }

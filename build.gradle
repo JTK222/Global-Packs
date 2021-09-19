@@ -1,166 +1,48 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
-        mavenCentral()
-        maven {url='https://repo.spongepowered.org/maven'}
+        maven {
+            name = 'Sponge Powered Maven'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version:'0.7-SNAPSHOT', changing:true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
-plugins {
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'idea'
-    id 'maven-publish'
-}
-
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.spongepowered.mixin'
-
-version = "${mc_version}-${mod_version}"
-group = "net.dark_roleplay.${mod_id}"
-archivesBaseName = "${mod_id}"
-
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/property_helper.gradle");
+applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/forge.gradle");
+applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/forge_datagen.gradle");
+applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/common_manifest.gradle");
+applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/common_artifacts.gradle");
+applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/maven_publish.gradle");
 
 
-minecraft {
-    mappings channel: "${mappings_channel}", version: "${mappings_version}"
+apply from: 'C:/Users/lukas/minecraft_modding/Gradle Templates/scripts/mixin.gradle'
+apply from: 'C:/Users/lukas/minecraft_modding/Gradle Templates/scripts/curseforge.gradle'
+
+minecraft{
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+}
 
-    runs {
-        client {
-            workingDirectory project.file('runs/client')
-            arg "-mixin.config=" + mod_id + ".mixins.json"
+//Downloads and caches
+def applyRemote(String url){
+    mkdir("./gradle/remote_script_cache/")
+    def remoteFile = new File('./gradle/remote_script_cache/' + url.md5())
 
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                examplemod {
-                    source sourceSets.main
-                }
-            }
+    def shouldDownload = !remoteFile.exists() || remoteFile.lastModified() < (System.currentTimeMillis() - 3.6e+9)
+    if(shouldDownload)
+        try(def out = new BufferedOutputStream(new FileOutputStream(remoteFile, false))){
+            out << new URL(url).openStream();
         }
 
-        server {
-            workingDirectory project.file('runs/server')
-            arg "-mixin.config=" + mod_id + ".mixins.json"
+    if(!remoteFile.exists())
+        throw new GradleException('Was unable to fetch "' + url + '" and couldn\'t find file in cache.\n Build is being aborted!')
 
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                examplemod {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
+    apply from: remoteFile
 }
 
-repositories {
-    maven {url = "https://maven.dark-roleplay.net/"}
-    mavenLocal()
-}
-
-dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-}
-
-// Example for how to get properties into the manifest for reading by the runtime..
-jar {
-    manifest {
-        attributes([
-                "Specification-Title": "${mod_id}",
-                "Specification-Vendor": "Dark Roleplay",
-                "Specification-Version": "1", // We are version 1 of ourselves
-                "Implementation-Title": "${mod_name}",
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"Dark Roleplay",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs": "${mod_id}.mixins.json"
-        ])
-    }
-}
-
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
-
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        expand 'version': project.version
-        expand 'mod_id': "${mod_id}"
-        expand 'mod_name': "${mod_name}"
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
-    }
-
-    doLast {
-        // Minify json resources
-        fileTree(dir: outputs.files.asPath, include: "**/*.json").each{
-            File file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file));
-        }
-
-        // Minify pngs resources
-//        fileTree(dir: outputs.files.asPath, include: "**/*.png").each {
-//            File file ->
-//                def proc = ('pingo -quiet -strip -auto ' + file).execute();
-//                proc.waitFor();
-//        }
-    }
-}
-
-jar.finalizedBy('reobfJar')
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url System.getenv("MVN_REPO")
-            credentials {
-                username System.getenv("MVN_USER")
-                password System.getenv("MVN_PASSWORD")
-            }
-        }
-    }
-}
-
-curseforge {
-    apiKey = System.getenv('CURSE_API_KEY') // This should really be in a gradle.properties file
-    project {
-        id = '317134'
-        changelog = file('changelog.txt') // A file can also be set using: changelog = file('changelog.txt')
-        releaseType = 'beta'
-        mainArtifact(jar) {
-            displayName = "${mod_name} - ${mc_version} - v${mod_version}"
-        }
-    }
-}
-
-import net.minecraftforge.gradle.common.task.SignJar
-
-task signJar(type: SignJar, dependsOn: jar) {
-    onlyIf { // Skip the task if our secret data isn't available
-        project.hasProperty('keyStore')
-    }
-
-    keyStore = project.keyStore
-    alias = project.keyStoreAlias
-    storePass = project.keyStorePass
-    keyPass = project.keyStoreKeyPass
-    inputFile = jar.archivePath
-    outputFile = jar.archivePath
-}
-
-build.dependsOn signJar
+//If dependencies.gradle exists, apply it
+def dependenciesFile = new File('./dependencies.gradle')
+if(dependenciesFile.exists())
+    apply from: dependenciesFile

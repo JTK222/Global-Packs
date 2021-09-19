@@ -1,0 +1,30 @@
+project.logger.lifecycle("Loading Forge datagen module.")
+
+minecraft {
+    runs {
+        data {
+            workingDirectory project.file('runs/data')
+
+            taskName modName.replaceAll("\\s", "") + 'Data'
+
+            property 'forge.logging.console.level', getDefaultString('forge_log_level', 'debug')
+            if (getDefaultProperty('forge_log_ansi', true).asBoolean())
+                property 'terminal.ansi', 'true'
+
+            args '--mod', project.ext.modId, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                dataRun {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+task runData() {
+    description = 'Runs the game server in datagen mode.'
+    dependsOn modName.replaceAll("\\s","") + 'Data'
+}

@@ -5,7 +5,7 @@ license="ARR"
 
 [[mods]]
 	modId="globaldataandresourcepacks"
-	version="${version}"
+	version="1.8"
 	displayName="Global Data- & Resourcepacks"
 	displayURL="https://minecraft.curseforge.com/projects/drp-global-datapack"
 	authors="JTK222"
