@@ -1,14 +1,27 @@
+
 buildscript {
     repositories {
         maven {
-            name = 'Sponge Powered Maven'
+            name = 'Official Forge Maven'
+            url = 'https://maven.minecraftforge.net'
+        }
+        maven {
+            name = 'Sponge Maven'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
+
+        mavenCentral()
     }
+
     dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'eclipse'
 
 applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/property_helper.gradle");
 applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/forge.gradle");
@@ -16,10 +29,9 @@ applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_versi
 applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/common_manifest.gradle");
 applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/common_artifacts.gradle");
 applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/maven_publish.gradle");
-
+applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/curseforge.gradle");
 
 apply from: 'C:/Users/lukas/minecraft_modding/Gradle Templates/scripts/mixin.gradle'
-apply from: 'C:/Users/lukas/minecraft_modding/Gradle Templates/scripts/curseforge.gradle'
 
 minecraft{
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -41,6 +53,12 @@ def applyRemote(String url){
 
     apply from: remoteFile
 }
+
+dependencies {
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+}
+
+jar.finalizedBy('reobfJar')
 
 //If dependencies.gradle exists, apply it
 def dependenciesFile = new File('./dependencies.gradle')

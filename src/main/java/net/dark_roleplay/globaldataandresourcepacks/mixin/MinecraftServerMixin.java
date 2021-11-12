@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
 
-	@Inject(at=@At("INVOKE"), remap = false, method="Lnet/minecraft/server/MinecraftServer;configurePackRepository(Lnet/minecraft/server/packs/repository/PackRepository;Lnet/minecraft/world/level/DataPackConfig;Z)Lnet/minecraft/world/level/DataPackConfig;")
-	private static void func_240772_a_(PackRepository p_240772_0_, DataPackConfig config, boolean p_240772_2_, CallbackInfoReturnable<DataPackConfig> info) {
+	@Inject(at=@At("INVOKE"), remap=false, method="Lnet/minecraft/server/MinecraftServer;configurePackRepository(Lnet/minecraft/server/packs/repository/PackRepository;Lnet/minecraft/world/level/DataPackConfig;Z)Lnet/minecraft/world/level/DataPackConfig;")
+	private static void configurePackRepository(PackRepository p_240772_0_, DataPackConfig config, boolean p_240772_2_, CallbackInfoReturnable<DataPackConfig> info) {
 		GlobalDataAndResourcepacks.addDatapackFinder(p_240772_0_);
 	}
 }
