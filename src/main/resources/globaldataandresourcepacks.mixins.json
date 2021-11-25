@@ -4,9 +4,11 @@
 	"compatibilityLevel": "JAVA_16",
 	"refmap": "globaldataandresourcepacks.refmap.json",
 	"mixins": [
-		"MinecraftServerMixin"
+		"DedicatedServerPackFinderMixin"
 	],
 	"client": [
+		"ClientPackFinderMixin",
+		"WorldGenPackFinderMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

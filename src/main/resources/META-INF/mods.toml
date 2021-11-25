@@ -11,14 +11,7 @@ license="ARR"
 	authors="JTK222"
 	description='''Allows modpacks to add Datapacks & Resource Packs, both are force enabled'''
 
-[[dependencies]]
-	modId="forge"
-	mandatory=true
-	versionRange="[37.0.59,)"
-	ordering="NONE"
-	side="BOTH"
-
-[[dependencies]]
+[[globaldataandresourcepacks.dependencies]]
 	modId="minecraft"
 	mandatory=true
 	versionRange="[1.17,)"

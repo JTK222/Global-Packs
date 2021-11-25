@@ -17,10 +17,9 @@ import java.util.function.Supplier;
 
 public class MultiFilePackFinder implements RepositorySource {
 
-	private static final FileFilter RESOURCEPACK_FILTER = (pack) -> {
-		return (pack.isFile() && pack.getName().endsWith(".zip")) ||
-				(pack.isDirectory() && (new File(pack, "pack.mcmeta")).isFile());
-	};
+	private static final FileFilter RESOURCEPACK_FILTER = (pack) ->
+			(pack.isFile() && pack.getName().endsWith(".zip")) ||
+			(pack.isDirectory() && (new File(pack, "pack.mcmeta")).isFile());
 
 	private final boolean shouldForcePacks;
 	private final Map<File, FilePackType> packs;
@@ -29,7 +28,7 @@ public class MultiFilePackFinder implements RepositorySource {
 	public MultiFilePackFinder(boolean shouldForcePacks, PackSource packSource, Set<File> files) {
 		this.shouldForcePacks = shouldForcePacks;
 		this.packSource = packSource;
-		this.packs = new HashMap<File, FilePackType>();
+		this.packs = new HashMap<>();
 		for (File file : files)
 			this.packs.put(file, FilePackType.MISSING);
 	}
@@ -67,7 +66,6 @@ public class MultiFilePackFinder implements RepositorySource {
 					);
 					if (pack != null)
 						packConsumer.accept(pack);
-					pack = null;
 					break;
 				case PACK_FOLDER:
 					File[] afile = file.listFiles(RESOURCEPACK_FILTER);
@@ -79,18 +77,13 @@ public class MultiFilePackFinder implements RepositorySource {
 									packBuilder, Pack.Position.TOP, this.packSource);
 					if (pack != null)
 						packConsumer.accept(pack);
-					pack = null;
 			}
 			break;
 		}
 	}
 
 	private Supplier<PackResources> createSupplier(File pack) {
-		return pack.isDirectory() ? () -> {
-			return new FolderPackResources(pack);
-		} : () -> {
-			return new FilePackResources(pack);
-		};
+		return pack.isDirectory() ? () -> new FolderPackResources(pack) : () -> new FilePackResources(pack);
 	}
 
 	private enum FilePackType {
