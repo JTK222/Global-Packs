@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         maven {
@@ -9,10 +8,8 @@ buildscript {
             name = 'Sponge Maven'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
-
         mavenCentral()
     }
-
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
@@ -20,47 +17,94 @@ buildscript {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
 
 applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/property_helper.gradle");
-applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/forge.gradle");
-applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/forge_datagen.gradle");
-applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/common_manifest.gradle");
-applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/common_artifacts.gradle");
 applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/maven_publish.gradle");
 applyRemote("https://raw.github.com/DarkRoleplay/Gradle-Templates/${script_version}/scripts/curseforge.gradle");
 
 apply from: 'C:/Users/lukas/minecraft_modding/Gradle Templates/scripts/mixin.gradle'
 
-minecraft{
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+
+minecraft {
+    mappings channel: 'official', version: '1.18'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('runs/client')
+            arg "--mixin.config=" + project.ext.modId + ".mixins.json"
+            mods {
+                globaldataandresourcepacks {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('runs/server')
+            arg "--mixin.config=" + project.ext.modId + ".mixins.json"
+            mods {
+                globaldataandresourcepacks {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+mixin {
+    add sourceSets.main, project.ext.modId + ".refmap.json"
+}
+
+repositories {
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:fmlonly:1.18-38.0.15'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "globaldataandresourcepacks",
+                "Specification-Vendor"    : "DarkRoleplay",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : "Global Data- and Resourcepacks",
+                "Implementation-Version"  : "1.9",
+                "Implementation-Vendor"   : "DarkRoleplay",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs":  project.ext.modId + ".mixins.json"
+        ])
+    }
 }
 
 //Downloads and caches
-def applyRemote(String url){
+def applyRemote(String url) {
     mkdir("./gradle/remote_script_cache/")
     def remoteFile = new File('./gradle/remote_script_cache/' + url.md5())
 
     def shouldDownload = !remoteFile.exists() || remoteFile.lastModified() < (System.currentTimeMillis() - 3.6e+9)
-    if(shouldDownload)
-        try(def out = new BufferedOutputStream(new FileOutputStream(remoteFile, false))){
+    if (shouldDownload)
+        try (def out = new BufferedOutputStream(new FileOutputStream(remoteFile, false))) {
             out << new URL(url).openStream();
         }
 
-    if(!remoteFile.exists())
+    if (!remoteFile.exists())
         throw new GradleException('Was unable to fetch "' + url + '" and couldn\'t find file in cache.\n Build is being aborted!')
 
     apply from: remoteFile
-}
-
-dependencies {
-    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 }
 
 jar.finalizedBy('reobfJar')
 
 //If dependencies.gradle exists, apply it
 def dependenciesFile = new File('./dependencies.gradle')
-if(dependenciesFile.exists())
+if (dependenciesFile.exists())
     apply from: dependenciesFile

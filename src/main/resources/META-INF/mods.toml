@@ -1,11 +1,11 @@
 modLoader="javafml"
-loaderVersion="[37,)"
+loaderVersion="[32,)"
 issueTrackerURL="https://minecraft.curseforge.com/projects/drp-global-datapack/issues"
 license="ARR"
 
 [[mods]]
 	modId="globaldataandresourcepacks"
-	version="1.8"
+	version="1.9.4"
 	displayName="Global Data- & Resourcepacks"
 	displayURL="https://minecraft.curseforge.com/projects/drp-global-datapack"
 	authors="JTK222"
@@ -14,6 +14,6 @@ license="ARR"
 [[globaldataandresourcepacks.dependencies]]
 	modId="minecraft"
 	mandatory=true
-	versionRange="[1.17,)"
+	versionRange="[1.12,)"
 	ordering="NONE"
 	side="BOTH"

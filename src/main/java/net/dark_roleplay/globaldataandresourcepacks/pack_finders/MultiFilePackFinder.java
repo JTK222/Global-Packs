@@ -3,6 +3,7 @@ package net.dark_roleplay.globaldataandresourcepacks.pack_finders;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.FolderPackResources;
 import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
@@ -21,14 +22,20 @@ public class MultiFilePackFinder implements RepositorySource {
 			(pack.isFile() && pack.getName().endsWith(".zip")) ||
 			(pack.isDirectory() && (new File(pack, "pack.mcmeta")).isFile());
 
+	private static final FileFilter DATAPACK_FILTER = (pack) ->
+			(pack.isFile() && pack.getName().endsWith(".zip")) ||
+					(pack.isDirectory() && (new File(pack, "pack.mcmeta")).isFile() && (new File(pack, "data/")).exists());
+
 	private final boolean shouldForcePacks;
 	private final Map<File, FilePackType> packs;
 	private final PackSource packSource;
+	private final PackType packType;
 
-	public MultiFilePackFinder(boolean shouldForcePacks, PackSource packSource, Set<File> files) {
+	public MultiFilePackFinder(boolean shouldForcePacks, PackType packType, PackSource packSource, Set<File> files) {
 		this.shouldForcePacks = shouldForcePacks;
 		this.packSource = packSource;
 		this.packs = new HashMap<>();
+		this.packType = packType;
 		for (File file : files)
 			this.packs.put(file, FilePackType.MISSING);
 	}
@@ -60,7 +67,7 @@ public class MultiFilePackFinder implements RepositorySource {
 				case UNZIPED_PACK:
 				case ZIPED_PACK:
 					pack = Pack.create(
-							"file/" + file.getName(), this.shouldForcePacks,
+							"global:" + file.getName(), this.shouldForcePacks,
 							createSupplier(file),
 							packBuilder, Pack.Position.TOP, this.packSource
 					);
@@ -68,17 +75,22 @@ public class MultiFilePackFinder implements RepositorySource {
 						packConsumer.accept(pack);
 					break;
 				case PACK_FOLDER:
-					File[] afile = file.listFiles(RESOURCEPACK_FILTER);
+					File[] afile = file.listFiles(this.packType == PackType.SERVER_DATA ? DATAPACK_FILTER : RESOURCEPACK_FILTER);
 					if (afile != null)
-						for (File packFile : afile)
+						for (File packFile : afile) {
 							pack = Pack.create(
-									"file/" + packFile.getName(), this.shouldForcePacks,
+									"global:" + packFile.getName(), this.shouldForcePacks,
 									createSupplier(packFile),
 									packBuilder, Pack.Position.TOP, this.packSource);
-					if (pack != null)
-						packConsumer.accept(pack);
+							if (pack != null) {
+								packConsumer.accept(pack);
+								pack = null;
+							}
+						}
+					break;
+				default:
+					break;
 			}
-			break;
 		}
 	}
 

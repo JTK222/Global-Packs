@@ -1,0 +1,8 @@
+// Load gradle.properties early on
+def buildProps = new Properties()
+
+file('gradle.properties').withInputStream {
+    buildProps.load(it) 
+}
+
+rootProject.name="${buildProps.getProperty('mod_id')}-${buildProps.getProperty('minecraft_version')}"
