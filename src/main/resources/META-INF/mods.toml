@@ -1,26 +1,19 @@
 modLoader="javafml"
-loaderVersion="[32,)"
+loaderVersion="[36,)"
 issueTrackerURL="https://minecraft.curseforge.com/projects/drp-global-datapack/issues"
 license="ARR"
 
 [[mods]]
 	modId="globaldataandresourcepacks"
-	version="${version}"
+	version="1.10"
 	displayName="Global Data- & Resourcepacks"
 	displayURL="https://minecraft.curseforge.com/projects/drp-global-datapack"
 	authors="JTK222"
-	description='''Allows modpacks to add Datapacks & Resource Packs, both are force enabled'''
+	description='''Allows modpacks to add Datapacks & Resource Packs'''
 
-[[dependencies]]
-	modId="forge"
-	mandatory=true
-	versionRange="[32,)"
-	ordering="NONE"
-	side="BOTH"
-
-[[dependencies]]
+[[globaldataandresourcepacks.dependencies]]
 	modId="minecraft"
 	mandatory=true
-	versionRange="[1.16,)"
+	versionRange="[1.16.5,)"
 	ordering="NONE"
 	side="BOTH"

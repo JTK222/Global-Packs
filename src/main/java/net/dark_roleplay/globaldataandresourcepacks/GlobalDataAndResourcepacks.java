@@ -1,28 +1,34 @@
 package net.dark_roleplay.globaldataandresourcepacks;
 
+import net.dark_roleplay.globaldataandresourcepacks.config.PackConfig;
+import net.dark_roleplay.globaldataandresourcepacks.pack_finders.MultiFilePackFinder;
 import net.minecraft.resources.IPackFinder;
-import net.minecraft.resources.ResourcePackList;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraft.resources.ResourcePackType;
 import net.minecraftforge.fml.common.Mod;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Mod("globaldataandresourcepacks")
 public final class GlobalDataAndResourcepacks {
 
-	private static final IPackFinder PACK_FINDER_IMPL = new ForcedFolderPackFinder(
-			new File("./global_data_packs"),
-			nameComp -> nameComp
-	);
-
 	public GlobalDataAndResourcepacks() {
-		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> GlobalDataAndResourcepacksClient::setupClientResourcePackFinder);
 	}
 
-	public static void addDatapackFinder(ResourcePackList packList){
-		packList.addPackFinder(PACK_FINDER_IMPL);
+	public static IPackFinder getRepositorySource(ResourcePackType type, boolean force) {
+		Set<File> files = new HashSet<>();
+
+		Optional<List<String>> packFolders = type == ResourcePackType.CLIENT_RESOURCES ? PackConfig.getRequiredResourceacks():
+				force ? PackConfig.getRequiredDatapacks() : !force ? PackConfig.getOptionalDatapacks() : Optional.empty();
+
+		packFolders.ifPresent(list -> list.stream()
+						.map(str -> new File("./" + str))
+						.filter(fl -> fl.exists())
+						.forEach(files::add));
+
+		return new MultiFilePackFinder(force, type, nameComp -> nameComp, files);
 	}
 }

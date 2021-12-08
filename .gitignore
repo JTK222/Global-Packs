@@ -27,3 +27,4 @@ forge*changelog.txt
 runs/*
 
 logs/
+gradle/remote_script_cache

@@ -4,12 +4,14 @@
 	"compatibilityLevel": "JAVA_8",
 	"refmap": "globaldataandresourcepacks.refmap.json",
 	"mixins": [
-		"MinecraftServerMixin"
+		"DedicatedServerPackFinderMixin"
 	],
 	"client": [
+		"ClientPackFinderMixin",
+		"WorldGenPackFinderMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
 	},
-	"minVersion": "0.8"
+	"minVersion": "0.8.4"
 }
