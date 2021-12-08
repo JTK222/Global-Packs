@@ -5,4 +5,5 @@ file('gradle.properties').withInputStream {
     buildProps.load(it) 
 }
 
+// Set project name to ModName-MCVersion eg ExampleMod-1.16.5
 rootProject.name="${buildProps.getProperty('mod_id')}-${buildProps.getProperty('minecraft_version')}"
