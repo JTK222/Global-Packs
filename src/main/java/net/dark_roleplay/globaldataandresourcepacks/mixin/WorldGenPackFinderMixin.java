@@ -16,9 +16,10 @@ public class WorldGenPackFinderMixin {
 	@ModifyArg(
 			method = "getDataPackSelectionSettings",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>(Lnet/minecraft/server/packs/PackType;[Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
-			index = 1
+			index = 1,
+			remap = false
 	)
 	private RepositorySource[] addClientPackFinder(RepositorySource[] arg) {
-		return ArrayUtils.addAll(arg, GlobalDataAndResourcepacks.getRepositorySource(PackType.SERVER_DATA, false));
+		return ArrayUtils.addAll(arg, GlobalDataAndResourcepacks.getRepositorySource(PackType.SERVER_DATA, false), GlobalDataAndResourcepacks.getRepositorySource(PackType.SERVER_DATA, true));
 	}
 }

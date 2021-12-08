@@ -16,7 +16,8 @@ public class DedicatedServerPackFinderMixin {
 	@ModifyArg(
 			method = "main",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>(Lnet/minecraft/server/packs/PackType;[Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
-			index = 1
+			index = 1,
+			remap = false
 	)
 	private static RepositorySource[] addServerPackFinders(RepositorySource[] arg) {
 		return ArrayUtils.addAll(arg, GlobalDataAndResourcepacks.getRepositorySource(PackType.SERVER_DATA, true), GlobalDataAndResourcepacks.getRepositorySource(PackType.SERVER_DATA, false));

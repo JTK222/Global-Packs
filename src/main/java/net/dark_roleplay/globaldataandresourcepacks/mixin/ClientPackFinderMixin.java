@@ -15,7 +15,8 @@ public class ClientPackFinderMixin {
 	@ModifyArg(
 			method = "<init>",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>(Lnet/minecraft/server/packs/repository/Pack$PackConstructor;[Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
-			index = 1
+			index = 1,
+			remap = false
 	)
 	private RepositorySource[] addClientPackFinder(RepositorySource[] arg) {
 		return ArrayUtils.addAll(arg, GlobalDataAndResourcepacks.getRepositorySource(PackType.CLIENT_RESOURCES, true));
@@ -24,7 +25,8 @@ public class ClientPackFinderMixin {
 	@ModifyArg(
 			method = "makeServerStem",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>(Lnet/minecraft/server/packs/PackType;[Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
-			index = 1
+			index = 1,
+			remap = false
 	)
 	private RepositorySource[] addClientPackFinder2(RepositorySource[] arg) {
 		return ArrayUtils.addAll(arg, GlobalDataAndResourcepacks.getRepositorySource(PackType.SERVER_DATA, true), GlobalDataAndResourcepacks.getRepositorySource(PackType.SERVER_DATA, false));
