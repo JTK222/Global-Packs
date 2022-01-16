@@ -1,0 +1,34 @@
+{
+    "schemaVersion": 1,
+    "id": "globaldataandresourcepacks",
+    "version": "${version}",
+  
+    "name": "Global Data- & Resourcepacks",
+    "description": "This is an example description! Tell everyone what your mod is about!",
+    "authors": [
+      "JTK222"
+    ],
+    "contact": {
+      "homepage": "https://fabricmc.net/",
+      "sources": "https://github.com/FabricMC/fabric-example-mod"
+    },
+  
+    "license": "ARR",
+    "disabled_icon": "assets/modid/icon.png",
+  
+    "environment": "*",
+    "entrypoints": {
+      "main": [
+        "net.dark_roleplay.gdarp.GlobalDataAndResourcepacks"
+      ]
+    },
+    "mixins": [
+      "globaldataandresourcepacks.mixins.json"
+    ],
+  
+    "depends": {
+      "minecraft": "1.18.x",
+      "java": ">=17"
+    }
+  }
+  

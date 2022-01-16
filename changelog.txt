@@ -1,3 +1,0 @@
-v0.9
-+ Added optional mods
-* No longer requires Forge (makes for faster updating, might also port to fabric if i feel like it)

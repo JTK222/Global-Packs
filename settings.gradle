@@ -1,9 +1,16 @@
-// Load gradle.properties early on
-def buildProps = new Properties()
-
-file('gradle.properties').withInputStream {
-    buildProps.load(it) 
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'Sponge Snapshots'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+    }
 }
 
-// Set project name to ModName-MCVersion eg ExampleMod-1.16.5
-rootProject.name="${buildProps.getProperty('mod_id')}-${buildProps.getProperty('minecraft_version')}"
+rootProject.name = 'MultiLoader'
+include("Common", "Fabric", "Forge")

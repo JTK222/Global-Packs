@@ -1,0 +1,18 @@
+{
+	"required": true,
+	"package": "net.dark_roleplay.gdarp.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"refmap": "globaldataandresourcepacks.refmap.json",
+	"mixins": [
+		"DedicatedServerPackFinderMixin",
+		"PackConfigurationMixin"
+	],
+	"client": [
+		"ClientPackFinderMixin",
+		"WorldGenPackFinderMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"minVersion": "0.8.4"
+}

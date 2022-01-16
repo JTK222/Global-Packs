@@ -1,0 +1,22 @@
+modLoader="javafml" #mandatory
+loaderVersion="[38,)" #mandatory
+license="All rights reserved"
+#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+[[mods]] #mandatory
+modId="globaldataandresourcepacks" #mandatory
+version="${file.jarVersion}" #mandatory
+displayName="Global Data- & Resourcepacks" #mandatory
+#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+#logoFile="multiloader.png" #optional
+credits="Thanks for Jared, for his multiloader project!" #optional
+authors="JTK222" #optional
+description='''
+Allows modpacks to add Datapacks & Resource Packs
+'''
+[[dependencies.globaldataandresourcepacks]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.18,1.19)"
+    ordering="NONE"
+    side="BOTH"
