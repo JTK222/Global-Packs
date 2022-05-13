@@ -1,7 +1,11 @@
 package net.dark_roleplay.gdarp.config;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import net.dark_roleplay.gdarp.CommonClass;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,8 +18,14 @@ public class PackConfig {
 
 	public static void loadConfigs() {
 		if (hasLoadedConfig) return;
+		try {
+			Files.createDirectories(new File(CommonClass.getGameDir().toFile(), "/config/").toPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		CommentedFileConfig config = CommentedFileConfig
-				.builder("./config/global_data_and_resourcepacks.toml")
+				.builder(new File(CommonClass.getGameDir().toFile(), "/config/global_data_and_resourcepacks.toml"))
 				.defaultData(PackConfig.class.getClassLoader().getResource("default_config.toml"))
 				.build();
 

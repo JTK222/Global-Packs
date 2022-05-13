@@ -20,10 +20,12 @@ public class CommonClass {
 
 		String launchArgument = System.getProperty("sun.java.command");
 
+		System.out.println(launchArgument);
+
 		if(launchArgument == null){
 			Constants.LOG.warn("Unable to find launch arguments, the mod might not function as expected.");
 		}else if(launchArgument.contains("gameDir")){
-			Pattern pattern = Pattern.compile("gameDir\\s(.+?)(?:\\s|$)");
+			Pattern pattern = Pattern.compile("gameDir\\s(.+?)(?:\\s--|$)");
 			Matcher matcher = pattern.matcher(launchArgument);
 			if(!matcher.find()){
 				Constants.LOG.error("Unable to find gameDir in launch arguments '{}' even though it was specified", launchArgument);
@@ -32,6 +34,10 @@ public class CommonClass {
 				GAME_DIR = Path.of(gameDirParam);
 			}
 		}
+	}
+
+	public static Path getGameDir() {
+		return GAME_DIR;
 	}
 
 	public static RepositorySource getRepositorySource(PackType type, boolean force) {

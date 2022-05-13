@@ -9,8 +9,12 @@ pluginManagement {
             name = 'Sponge Snapshots'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
+				maven {
+					name = 'Quilt'
+					url = 'https://maven.quiltmc.org/repository/release'
+				}
     }
 }
 
 rootProject.name = 'MultiLoader'
-include("Common", "Fabric", "Forge")
+include("Common", "Fabric", "Forge", "Quilt")

@@ -10,6 +10,11 @@ import net.minecraft.server.packs.repository.RepositorySource;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,13 +23,33 @@ import java.util.function.Supplier;
 
 public class MultiFilePackFinder implements RepositorySource {
 
-	private static final FileFilter RESOURCEPACK_FILTER = (pack) ->
-			(pack.isFile() && pack.getName().endsWith(".zip")) ||
-					(pack.isDirectory() && (new File(pack, "pack.mcmeta")).isFile());
+	private static final FileFilter RESOURCEPACK_FILTER = (pack) -> {
+		if (pack.isFile() && pack.getName().endsWith(".zip")) {
+			try {
+				FileSystem pfs = FileSystems.newFileSystem(pack.toPath());
+				Path pth = pfs.getPath("assets/");
+				return Files.exists(pth);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+		return pack.isDirectory() && (new File(pack, "pack.mcmeta")).isFile() && (new File(pack, "assets/")).exists();
+	};
 
-	private static final FileFilter DATAPACK_FILTER = (pack) ->
-			(pack.isFile() && pack.getName().endsWith(".zip")) ||
-					(pack.isDirectory() && (new File(pack, "pack.mcmeta")).isFile() && (new File(pack, "data/")).exists());
+	private static final FileFilter DATAPACK_FILTER = (pack) -> {
+		if (pack.isFile() && pack.getName().endsWith(".zip")) {
+			try {
+				FileSystem pfs = FileSystems.newFileSystem(pack.toPath());
+				Path pth = pfs.getPath("data/");
+				return Files.exists(pth);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+		return pack.isDirectory() && (new File(pack, "pack.mcmeta")).isFile() && (new File(pack, "data/")).exists();
+	};
 
 	private final boolean shouldForcePacks;
 	private final Map<File, FilePackType> packs;
@@ -47,10 +72,14 @@ public class MultiFilePackFinder implements RepositorySource {
 			else if (file.isDirectory() && new File(file, "pack.mcmeta").exists())
 				packs.put(file, FilePackType.UNZIPED_PACK);
 			else {
-				if (!file.exists())
-					file.mkdirs();
-				packs.put(file, FilePackType.PACK_FOLDER);
+				try {
+					if (Files.notExists(file.toPath()))
+						Files.createDirectories(file.toPath());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+			packs.put(file, FilePackType.PACK_FOLDER);
 		}
 	}
 
@@ -79,7 +108,7 @@ public class MultiFilePackFinder implements RepositorySource {
 					if (afile != null)
 						for (File packFile : afile) {
 							pack = Pack.create(
-									this.shouldForcePacks ? "global:" : "globalOpt:" + packFile.getName(), this.shouldForcePacks,
+									(this.shouldForcePacks ? "global:" : "globalOpt:") + packFile.getName(), this.shouldForcePacks,
 									createSupplier(packFile),
 									packBuilder, Pack.Position.TOP, this.packSource);
 							if (pack != null) {
@@ -98,10 +127,10 @@ public class MultiFilePackFinder implements RepositorySource {
 		return pack.isDirectory() ? () -> new FolderPackResources(pack) : () -> new FilePackResources(pack);
 	}
 
-	private enum FilePackType {
-		MISSING,
-		ZIPED_PACK,
-		UNZIPED_PACK,
-		PACK_FOLDER
-	}
+private enum FilePackType {
+	MISSING,
+	ZIPED_PACK,
+	UNZIPED_PACK,
+	PACK_FOLDER
+}
 }

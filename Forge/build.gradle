@@ -20,7 +20,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-archivesBaseName = "${mod_name}-forge-${minecraft_version}"
+archivesBaseName = "${mod_file_name}-forge-${minecraft_version}"
 
 mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
@@ -81,12 +81,10 @@ minecraft {
     }
 }
 
-sourceSets.main.resources.srcDir 'src/generated/resources'
-
 dependencies {
-    minecraft "net.minecraftforge:fmlonly:${minecraft_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
-    annotationProcessor "org.spongepowered:mixin:0.8.4-SNAPSHOT:processor"
+    annotationProcessor "org.spongepowered:mixin:0.8.5-SNAPSHOT:processor"
 }
 
 tasks.withType(JavaCompile) {
@@ -132,7 +130,8 @@ curseforge{
         id = project.findProperty('curse_project')
         releaseType = project.findProperty('curse_release_type_forge')
         changelogType = 'markdown'
-        changelog = new File("../", "Changelog.md").text
+        if(new File("../", "Changelog.md").exists())
+            changelog = new File("../", "Changelog.md").text
         addGameVersion project.minecraft_version
         addGameVersion 'Forge'
 

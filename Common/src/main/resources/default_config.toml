@@ -1,8 +1,9 @@
 #This config allows you to add or remove folders or single files as Data-/Resourcepacks
-#For that simply specify the file path to the folder/file relative to your .minecraft folder
+#For that simply specify the file path to the folder/file relative to your .minecraft or instance folder
+#With the current config you can place a Datapack into '.minecraft/global_packs/required_data' to force enable a datapack.
 [resourcepacks]
 required = [
-    #"somewhere/random_pack.zip" # You can also point at specific files!
+    #"other_folder/random_pack.zip" # You can also point at specific files!
     "global_packs/required_resources/"
 ]
 

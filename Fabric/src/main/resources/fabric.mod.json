@@ -1,34 +1,32 @@
 {
-    "schemaVersion": 1,
-    "id": "globaldataandresourcepacks",
-    "version": "${version}",
+   "schemaVersion": 1,
+   "license": "ARR",
+   "id": "globaldataandresourcepacks",
+   "version": "${version}",
   
-    "name": "Global Data- & Resourcepacks",
-    "description": "This is an example description! Tell everyone what your mod is about!",
-    "authors": [
+   "name": "Global Data- & Resourcepacks",
+   "description": "This is an example description! Tell everyone what your mod is about!",
+   "authors": [
       "JTK222"
-    ],
-    "contact": {
-      "homepage": "https://fabricmc.net/",
-      "sources": "https://github.com/FabricMC/fabric-example-mod"
-    },
-  
-    "license": "ARR",
-    "disabled_icon": "assets/modid/icon.png",
-  
-    "environment": "*",
-    "entrypoints": {
+   ],
+   "contact": {
+      "homepage": "https://www.curseforge.com/minecraft/mc-mods/drp-global-datapack",
+      "issues": "https://github.com/DarkRoleplay/Global-Data-and-Resourcepacks/issues",
+      "sources": "https://github.com/DarkRoleplay/Global-Data-and-Resourcepacks"
+   },
+
+   "environment": "*",
+   "entrypoints": {
       "main": [
-        "net.dark_roleplay.gdarp.GlobalDataAndResourcepacks"
+         "net.dark_roleplay.gdarp.GlobalDataAndResourcepacks"
       ]
-    },
-    "mixins": [
+   },
+   "mixins": [
       "globaldataandresourcepacks.mixins.json"
-    ],
-  
-    "depends": {
-      "minecraft": "1.18.x",
+   ],
+   "depends": {
+      "minecraft": ">=1.18",
       "java": ">=17"
-    }
+   }
   }
   
