@@ -148,10 +148,19 @@ curseforge{
 
 modrinth {
     token = project.findProperty('modrinth_auth')
-    projectId = "NRLPy2mk"
-    versionType = "release" // This is the default -- can also be `beta` or `alpha`
-    version = "${version} - Forge"
-    uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-    gameVersions = ["1.18", "1.18.1", "1.18.2"] // Must be an array, even with only one version
+    projectId = project.findProperty('modrinth_project')
+    versionType = project.findProperty('modrinth_release_type_forge')
+    versionName = "$project.ext.mod_name - v${version}"
+    version = "${version}_forge"
+    uploadFile = jar
+    gameVersions = Arrays.asList(project.findProperty('modrinth_versions').toString().split(","))
     loaders = ["forge"]
+}
+
+task publishEverywhere {
+    dependsOn 'clean'
+    dependsOn 'curseforge'
+    dependsOn 'modrinth'
+    tasks.findByName('curseforge').mustRunAfter 'clean'
+    tasks.findByName('modrinth').mustRunAfter 'clean'
 }

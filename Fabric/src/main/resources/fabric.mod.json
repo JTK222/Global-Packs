@@ -16,11 +16,7 @@
    },
 
    "environment": "*",
-   "entrypoints": {
-      "main": [
-         "net.dark_roleplay.gdarp.GlobalDataAndResourcepacks"
-      ]
-   },
+   "entrypoints": {},
    "mixins": [
       "globaldataandresourcepacks.mixins.json"
    ],

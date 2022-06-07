@@ -9,6 +9,7 @@
 	],
 	"client": [
 		"ClientPackFinderMixin",
+		"WorldOpenFlowFinderMixin",
 		"WorldGenPackFinderMixin"
 	],
 	"injectors": {

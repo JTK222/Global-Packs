@@ -1,7 +1,6 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
     id 'maven-publish'
-    id 'idea'
     id "com.matthewprenger.cursegradle" version "1.4.0"
     id "com.modrinth.minotaur" version "2.+"
 }
@@ -12,8 +11,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    //modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+
+    //implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":Common")
 
     implementation group: 'com.electronwill.night-config', name: 'core', version: '3.6.5'
@@ -44,7 +43,6 @@ loom {
     }
 }
 
-
 processResources {
     from project(":Common").sourceSets.main.resources
     inputs.property "version", project.version
@@ -52,10 +50,6 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
-}
-
-minecraft{
-    refmapName = "${mod_id}.refmap.json";
 }
 
 tasks.withType(JavaCompile) {
@@ -111,11 +105,19 @@ curseforge{
 
 modrinth {
     token = project.findProperty('modrinth_auth')
-    projectId = "NRLPy2mk"
-    versionType = "release" // This is the default -- can also be `beta` or `alpha`
+    projectId = project.findProperty('modrinth_project')
+    versionType = project.findProperty('modrinth_release_type_fabric')
     versionName = "$project.ext.mod_name - v${version}"
     version = "${version}_fabric"
-    uploadFile = remapJar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-    gameVersions = ["1.18", "1.18.1", "1.18.2"] // Must be an array, even with only one version
-    loaders = ["forge"]
+    uploadFile = remapJar
+    gameVersions = Arrays.asList(project.findProperty('modrinth_versions').toString().split(","))
+    loaders = ["fabric"]
+}
+
+task publishEverywhere {
+    dependsOn 'clean'
+    dependsOn 'curseforge'
+    dependsOn 'modrinth'
+    tasks.findByName('curseforge').mustRunAfter 'clean'
+    tasks.findByName('modrinth').mustRunAfter 'clean'
 }

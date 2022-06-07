@@ -1,22 +1,18 @@
 plugins {
+    id 'org.quiltmc.loom' version "0.12.+"
 	id 'maven-publish'
-	id 'org.quiltmc.loom' version "0.12.+"
     id "com.matthewprenger.cursegradle" version "1.4.0"
     id "com.modrinth.minotaur" version "2.+"
 }
 
 archivesBaseName = "${mod_file_name}-quilt-${minecraft_version}"
 
-repositories {
-
-}
-
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
 
     modImplementation "org.quiltmc:quilt-loader:${quilt_loader_version}"
-    modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilt_version}"
+//    modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilt_version}"
 
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":Common")
@@ -49,7 +45,6 @@ loom {
     }
 }
 
-
 processResources {
     from project(":Common").sourceSets.main.resources
     inputs.property "version", project.version
@@ -59,12 +54,6 @@ processResources {
     filesMatching("quilt.mod.json") {
         expand "version": project.version
     }
-}
-
-tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = "UTF-8"
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 17
 }
 
 tasks.withType(JavaCompile) {
@@ -98,7 +87,7 @@ curseforge{
     apiKey = project.findProperty('curse_auth')
     project{
         id = project.findProperty('curse_project')
-        releaseType = project.findProperty('curse_release_type_fabric')
+        releaseType = project.findProperty('curse_release_type_quilt')
         changelogType = 'markdown'
         if(new File("../", "Changelog.md").exists())
             changelog = new File("../", "Changelog.md").text
@@ -120,12 +109,19 @@ curseforge{
 
 modrinth {
     token = project.findProperty('modrinth_auth')
-    projectId = "NRLPy2mk"
-    versionType = "release" // This is the default -- can also be `beta` or `alpha`
+    projectId = project.findProperty('modrinth_project')
+    versionType = project.findProperty('modrinth_release_type_quilt')
     versionName = "$project.ext.mod_name - v${version}"
     version = "${version}_quilt"
-    uploadFile = remapJar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-    gameVersions = ["1.18", "1.18.1", "1.18.2"] // Must be an array, even with only one version
-    loaders = ["forge"]
+    uploadFile = remapJar
+    gameVersions = Arrays.asList(project.findProperty('modrinth_versions').toString().split(","))
+    loaders = ["quilt"]
 }
 
+task publishEverywhere {
+    dependsOn 'clean'
+    dependsOn 'curseforge'
+    dependsOn 'modrinth'
+    tasks.findByName('curseforge').mustRunAfter 'clean'
+    tasks.findByName('modrinth').mustRunAfter 'clean'
+}
