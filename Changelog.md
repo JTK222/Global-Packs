@@ -1,4 +1,7 @@
-**v1.12.2**  
+**v1.12.2.1**
+* (Quilt & Fabric Only) Fixed refmap error
+
+**v1.12.2**
 * Made some changes to become quilt compatible  
 * Those changes should also benefit stability on both forge and fabric  
 

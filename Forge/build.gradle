@@ -12,6 +12,7 @@ buildscript {
 }
 plugins {
     id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 apply plugin: 'java'
@@ -143,4 +144,14 @@ curseforge{
             forgeGradleIntegration = true;
         }
     }
+}
+
+modrinth {
+    token = project.findProperty('modrinth_auth')
+    projectId = "NRLPy2mk"
+    versionType = "release" // This is the default -- can also be `beta` or `alpha`
+    version = "${version} - Forge"
+    uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
+    gameVersions = ["1.18", "1.18.1", "1.18.2"] // Must be an array, even with only one version
+    loaders = ["forge"]
 }

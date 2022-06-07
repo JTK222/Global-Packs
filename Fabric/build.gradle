@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'idea'
     id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 archivesBaseName = "${mod_file_name}-fabric-${minecraft_version}"
@@ -23,6 +24,10 @@ dependencies {
 }
 
 loom {
+    mixin {
+        defaultRefmapName = "${mod_id}.refmap.json"
+    }
+
     runs {
         client {
             client()
@@ -102,4 +107,15 @@ curseforge{
             forgeGradleIntegration = false;
         }
     }
+}
+
+modrinth {
+    token = project.findProperty('modrinth_auth')
+    projectId = "NRLPy2mk"
+    versionType = "release" // This is the default -- can also be `beta` or `alpha`
+    versionName = "$project.ext.mod_name - v${version}"
+    version = "${version}_fabric"
+    uploadFile = remapJar // With Loom, this MUST be set to `remapJar` instead of `jar`!
+    gameVersions = ["1.18", "1.18.1", "1.18.2"] // Must be an array, even with only one version
+    loaders = ["forge"]
 }
