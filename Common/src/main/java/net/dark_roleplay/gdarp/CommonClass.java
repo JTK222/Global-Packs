@@ -40,17 +40,18 @@ public class CommonClass {
 		return GAME_DIR;
 	}
 
-	public static RepositorySource getRepositorySource(PackType type, boolean force) {
-		Set<File> files = new HashSet<>();
+	public static MultiFilePackFinder getRepositorySource(PackType type, boolean force) {
+		Set<Path> files = new HashSet<>();
 
 		Optional<List<String>> packFolders = switch (type){
-			case CLIENT_RESOURCES -> PackConfig.getRequiredResourceacks();
+			case CLIENT_RESOURCES -> force ? PackConfig.getRequiredResourceacks() : PackConfig.getOptionalResourceacks();
 			case SERVER_DATA -> force ? PackConfig.getRequiredDatapacks() : PackConfig.getOptionalDatapacks();
 			default -> Optional.empty();
 		};
 
 		packFolders.ifPresent(list -> list.stream()
-				.map(str -> new File(GAME_DIR.toFile(), "/" + str))
+				.map(str -> Path.of(str))
+				.map(str -> PackConfig.isSystemGlobalPath(str) ? str : GAME_DIR.resolve(str))
 				.forEach(files::add));
 
 		return new MultiFilePackFinder(force, type, nameComp -> nameComp, files);

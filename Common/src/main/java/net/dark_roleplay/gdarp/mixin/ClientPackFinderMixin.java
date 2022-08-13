@@ -22,6 +22,6 @@ public class ClientPackFinderMixin {
 			index = 1
 	)
 	private RepositorySource[] addClientPackFinder(RepositorySource[] arg) {
-		return ArrayUtils.addAll(arg, CommonClass.getRepositorySource(PackType.CLIENT_RESOURCES, true));
+		return ArrayUtils.addAll(arg, CommonClass.getRepositorySource(PackType.CLIENT_RESOURCES, true), CommonClass.getRepositorySource(PackType.CLIENT_RESOURCES, false));
 	}
 }

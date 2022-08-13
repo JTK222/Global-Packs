@@ -152,6 +152,7 @@ modrinth {
     versionType = project.findProperty('modrinth_release_type_forge')
     versionName = "$project.ext.mod_name - v${version}"
     version = "${version}_forge"
+    //changelog = new File("./../", "Changelog.md").getText('UTF-8')
     uploadFile = jar
     gameVersions = Arrays.asList(project.findProperty('modrinth_versions').toString().split(","))
     loaders = ["forge"]

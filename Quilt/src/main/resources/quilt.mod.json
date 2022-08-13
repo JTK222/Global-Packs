@@ -6,7 +6,7 @@
       "id": "globaldataandresourcepacks",
       "version": "${version}",
       "metadata": {
-         "name": "Global Data- & Resourcepacks",
+         "name": "Global Packs",
          "description": "Allows modpacks to add  Global Datapacks & Resourcepacks",
          "contributors": {
             "JTK222": "Owner"
@@ -22,7 +22,7 @@
       "depends": [
          {
             "id": "minecraft",
-            "versions": ">=1.18.2"
+            "versions": ">=1.19"
          },
          {
             "id": "java",

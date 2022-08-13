@@ -16,10 +16,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class MultiFilePackFinder implements RepositorySource {
 
@@ -52,29 +54,29 @@ public class MultiFilePackFinder implements RepositorySource {
 	};
 
 	private final boolean shouldForcePacks;
-	private final Map<File, FilePackType> packs;
+	private final Map<Path, FilePackType> packs;
 	private final PackSource packSource;
 	private final PackType packType;
 
-	public MultiFilePackFinder(boolean shouldForcePacks, PackType packType, PackSource packSource, Set<File> files) {
+	public MultiFilePackFinder(boolean shouldForcePacks, PackType packType, PackSource packSource, Set<Path> files) {
 		this.shouldForcePacks = shouldForcePacks;
 		this.packSource = packSource;
 		this.packs = new HashMap<>();
 		this.packType = packType;
-		for (File file : files)
+		for (Path file : files)
 			this.packs.put(file, FilePackType.MISSING);
 	}
 
 	private void updatePacks() {
-		for (File file : this.packs.keySet()) {
-			if (file.isFile() && file.getPath().endsWith(".zip"))
+		for (Path file : this.packs.keySet()) {
+			if (Files.isRegularFile(file) && file.endsWith(".zip"))
 				packs.put(file, FilePackType.ZIPED_PACK);
-			else if (file.isDirectory() && new File(file, "pack.mcmeta").exists())
+			else if (Files.isDirectory(file) && Files.exists(file.resolve("pack.mcmeta")))
 				packs.put(file, FilePackType.UNZIPED_PACK);
 			else {
 				try {
-					if (Files.notExists(file.toPath()))
-						Files.createDirectories(file.toPath());
+					if (Files.notExists(file))
+						Files.createDirectories(file);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -87,7 +89,7 @@ public class MultiFilePackFinder implements RepositorySource {
 	public void loadPacks(Consumer<Pack> packConsumer, Pack.PackConstructor packBuilder) {
 		updatePacks();
 
-		for (File file : this.packs.keySet()) {
+		for (Path file : this.packs.keySet()) {
 			FilePackType type = this.packs.get(file);
 
 			Pack pack = null;
@@ -96,7 +98,7 @@ public class MultiFilePackFinder implements RepositorySource {
 				case UNZIPED_PACK:
 				case ZIPED_PACK:
 					pack = Pack.create(
-							this.shouldForcePacks ? "global:" : "globalOpt:" + file.getName(), this.shouldForcePacks,
+							this.shouldForcePacks ? "global:" : "globalOpt:" + file.getFileName(), this.shouldForcePacks,
 							createSupplier(file),
 							packBuilder, Pack.Position.TOP, this.packSource
 					);
@@ -104,12 +106,12 @@ public class MultiFilePackFinder implements RepositorySource {
 						packConsumer.accept(pack);
 					break;
 				case PACK_FOLDER:
-					File[] afile = file.listFiles(this.packType == PackType.SERVER_DATA ? DATAPACK_FILTER : RESOURCEPACK_FILTER);
+					File[] afile = file.toFile().listFiles(this.packType == PackType.SERVER_DATA ? DATAPACK_FILTER : RESOURCEPACK_FILTER);
 					if (afile != null)
 						for (File packFile : afile) {
 							pack = Pack.create(
 									(this.shouldForcePacks ? "global:" : "globalOpt:") + packFile.getName(), this.shouldForcePacks,
-									createSupplier(packFile),
+									createSupplier(packFile.toPath()),
 									packBuilder, Pack.Position.TOP, this.packSource);
 							if (pack != null) {
 								packConsumer.accept(pack);
@@ -123,8 +125,12 @@ public class MultiFilePackFinder implements RepositorySource {
 		}
 	}
 
-	private Supplier<PackResources> createSupplier(File pack) {
-		return pack.isDirectory() ? () -> new FolderPackResources(pack) : () -> new FilePackResources(pack);
+	public List<String> getProvidedPacks(){
+		return this.packs.keySet().stream().map(fl -> (this.shouldForcePacks ? "global:" : "globalOpt:") + fl.getFileName()).collect(Collectors.toList());
+	}
+
+	private Supplier<PackResources> createSupplier(Path pack) {
+		return Files.isDirectory(pack) ? () -> new FolderPackResources(pack.toFile()) : () -> new FilePackResources(pack.toFile());
 	}
 
 private enum FilePackType {

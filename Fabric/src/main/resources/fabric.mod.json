@@ -21,7 +21,7 @@
       "globaldataandresourcepacks.mixins.json"
    ],
    "depends": {
-      "minecraft": ">=1.18",
+      "minecraft": ">=1.19",
       "java": ">=17"
    }
   }
