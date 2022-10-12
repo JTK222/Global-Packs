@@ -13,6 +13,8 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     //modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":Common")
 
@@ -46,6 +48,7 @@ loom {
 
 
 processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(":Common").sourceSets.main.resources
     inputs.property "version", project.version
 
@@ -117,5 +120,5 @@ modrinth {
     version = "${version}_fabric"
     uploadFile = remapJar // With Loom, this MUST be set to `remapJar` instead of `jar`!
     gameVersions = ["1.18", "1.18.1", "1.18.2"] // Must be an array, even with only one version
-    loaders = ["forge"]
+    loaders = ["fabric"]
 }

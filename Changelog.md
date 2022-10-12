@@ -1,3 +1,9 @@
+**v1.12.3**
++ Minor rework, now datapacks properly overwrite mod datapacks
+
+**v.1.12.2.2**  
+* Fixed zip file packs specified in the config, not working  
+
 **v1.12.2.1**
 * (Quilt & Fabric Only) Fixed refmap error
 

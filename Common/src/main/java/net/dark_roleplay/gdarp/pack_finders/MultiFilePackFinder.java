@@ -78,8 +78,8 @@ public class MultiFilePackFinder implements RepositorySource {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				packs.put(file, FilePackType.PACK_FOLDER);
 			}
-			packs.put(file, FilePackType.PACK_FOLDER);
 		}
 	}
 
