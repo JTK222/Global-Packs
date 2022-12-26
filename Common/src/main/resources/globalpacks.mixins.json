@@ -4,22 +4,11 @@
 	"compatibilityLevel": "JAVA_17",
 	"refmap": "globalpacks.refmap.json",
 	"mixins": [
-		"BootstrapHook",
-		"PackConfigurationMixin",
-		"PackRepositoryMixin",
-		"accessors.PackRepositoryAccessor",
-		"accessors.FolderRepositorySourceAccessor",
-		"accessors.DataPackConfigAccessor"
+		"ServerPacksSourceMixin"
 	],
 	"client": [
-		"ClientPackFinderMixin",
-		"WorldOpenFlowFinderMixin",
-		"WorldGenPackFinderMixin"
-	],
-	"disabled": [
-		"DedicatedServerPackFinderMixin",
-		"PackConfigurationMixin",
-		"ClientPackFinderMixin"
+		"MinecraftMixin",
+		"CreateWorldScreenMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 
 public class GlobalPackFinder implements RepositorySource {
 
-	private static PackSource GLOBAL = PackSource.create(name -> Component.translatable("globalpacks.source.global", name).withStyle(ChatFormatting.GRAY), true);
-	private static PackSource GLOBAL_OPT = PackSource.create(name -> Component.translatable("globalpacks.source.global_opt", name).withStyle(ChatFormatting.GRAY), true);
+	private static PackSource GLOBAL = PackSource.create(name -> name.copy().append(" (Global)").withStyle(ChatFormatting.AQUA), true);
+	private static PackSource GLOBAL_OPT = PackSource.create(name -> name.copy().append(" (Global Optional)").withStyle(ChatFormatting.DARK_AQUA), true);
 
 	private final PackType packType;
 	private final boolean forcedPacks;
@@ -40,14 +40,14 @@ public class GlobalPackFinder implements RepositorySource {
 	public void loadPacks(Consumer<Pack> packRegistrar) {
 		discoverResourcePacks(path -> {
 			Pack.ResourcesSupplier resourceSupplier = null;
-			if(Files.isRegularFile(path) && path.endsWith(".zip"))
+			if(Files.isRegularFile(path) && path.toString().endsWith(".zip"))
 				resourceSupplier = createFilePack(path);
 			else resourceSupplier = createFolderPack(path);
 
 			if(resourceSupplier == null) return;
 
 			Pack pack =  Pack.readMetaAndCreate(
-					(this.forcedPacks ? "global/" : "globalOpt/") + path.getFileName(),
+					path.getFileName().toString(),
 					Component.literal(path.getFileName().toString()),
 					this.forcedPacks, resourceSupplier,
 					this.packType,
