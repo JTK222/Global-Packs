@@ -1,11 +1,10 @@
 package net.dark_roleplay.gdarp;
 
 import net.dark_roleplay.gdarp.config.PackConfig;
-import net.dark_roleplay.gdarp.pack_finders.MultiFilePackFinder;
+import net.dark_roleplay.gdarp.pack_finders.GlobalPackFinder;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.RepositorySource;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -40,11 +39,11 @@ public class CommonClass {
 		return GAME_DIR;
 	}
 
-	public static MultiFilePackFinder getRepositorySource(PackType type, boolean force) {
+	public static RepositorySource getRepositorySource(PackType type, boolean force) {
 		List<Path> files = new ArrayList<>();
 
 		Optional<List<String>> packFolders = switch (type){
-			case CLIENT_RESOURCES -> force ? PackConfig.getRequiredResourceacks() : PackConfig.getOptionalResourceacks();
+			case CLIENT_RESOURCES -> force ? PackConfig.getRequiredResourcePacks() : PackConfig.getOptionalResourcePacks();
 			case SERVER_DATA -> force ? PackConfig.getRequiredDatapacks() : PackConfig.getOptionalDatapacks();
 			default -> Optional.empty();
 		};
@@ -54,6 +53,6 @@ public class CommonClass {
 				.map(str -> PackConfig.isSystemGlobalPath(str) ? str : GAME_DIR.resolve(str))
 				.forEach(files::add));
 
-		return new MultiFilePackFinder(force, type, nameComp -> nameComp, files);
+		return new GlobalPackFinder(type, force, files);
 	}
 }

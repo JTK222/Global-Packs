@@ -3,7 +3,7 @@
    "license": "ARR",
    "quilt_loader": {
       "group": "net.dark_roleplay.gdarp",
-      "id": "globaldataandresourcepacks",
+      "id": "globalpacks",
       "version": "${version}",
       "metadata": {
          "name": "Global Packs",
@@ -30,6 +30,6 @@
          }
       ]
    },
-   "mixin": "globaldataandresourcepacks.mixins.json"
+   "mixin": "globalpacks.mixins.json"
 }
   

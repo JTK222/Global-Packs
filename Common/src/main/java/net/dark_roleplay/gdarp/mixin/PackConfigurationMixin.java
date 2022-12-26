@@ -14,7 +14,7 @@ public class PackConfigurationMixin {
 			method = "configurePackRepository",
 			at = @At(value = "INVOKE", target = "Ljava/util/Set;add(Ljava/lang/Object;)Z", ordinal = 1)
 	)
-	private static boolean packConfiguration(Set<String> packs, Object pack) {
+	private static boolean globalpacks_packConfiguration(Set<String> packs, Object pack) {
 		String packName = (String) pack;
 		if(packName.startsWith("globalOpt:")){
 			return false;

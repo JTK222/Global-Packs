@@ -16,5 +16,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'MultiLoader'
+rootProject.name = 'Global Packs'
 include("Common", "Fabric", "Forge", "Quilt")

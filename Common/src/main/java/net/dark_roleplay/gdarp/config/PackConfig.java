@@ -17,7 +17,7 @@ public class PackConfig {
 
 	private static Optional<List<String>> REQUIRED_DATAPACKS;
 	private static Optional<List<String>> OPTIONAL_DATAPACKS;
-	private static Optional<List<String>> REQUIRED_RESOURCEACKS;
+	private static Optional<List<String>> REQUIRED_RESOURCEPACKS;
 	private static Optional<List<String>> OPTIONAL_RESOURCEPACKS;
 
 	private static Optional<Boolean> ENABLE_SYSTEM_GLOBAL;
@@ -59,7 +59,7 @@ public class PackConfig {
 
 		REQUIRED_DATAPACKS = config.getOptional("datapacks.required");
 		OPTIONAL_DATAPACKS = config.getOptional("datapacks.optional");
-		REQUIRED_RESOURCEACKS = config.getOptional("resourcepacks.required");
+		REQUIRED_RESOURCEPACKS = config.getOptional("resourcepacks.required");
 
 		if(enableSystemGlobal){
 			String userHome = System.getProperty("user.home");
@@ -67,7 +67,7 @@ public class PackConfig {
 
 			REQUIRED_DATAPACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("required_datapacks").toFile().getPath()));
 			OPTIONAL_DATAPACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("optional_datapacks").toFile().getPath()));
-			REQUIRED_RESOURCEACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("required_resourcepacks").toFile().getPath()));
+			REQUIRED_RESOURCEPACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("required_resourcepacks").toFile().getPath()));
 			OPTIONAL_RESOURCEPACKS = Optional.of(Arrays.asList(SYSTEM_GLOBAL_PATH.resolve("optional_resourcepacks").toFile().getPath()));
 		}else{
 			OPTIONAL_RESOURCEPACKS = Optional.empty();
@@ -104,12 +104,12 @@ public class PackConfig {
 		return OPTIONAL_DATAPACKS;
 	}
 
-	public static Optional<List<String>> getRequiredResourceacks() {
+	public static Optional<List<String>> getRequiredResourcePacks() {
 		loadConfigs();
-		return REQUIRED_RESOURCEACKS;
+		return REQUIRED_RESOURCEPACKS;
 	}
 
-	public static Optional<List<String>> getOptionalResourceacks() {
+	public static Optional<List<String>> getOptionalResourcePacks() {
 		loadConfigs();
 		return OPTIONAL_RESOURCEPACKS;
 	}

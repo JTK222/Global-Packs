@@ -7,7 +7,6 @@ public abstract class IConfigEntry<T> {
 	private T actualValue;
 
 
-
 	public IConfigEntry(T defaultValue) {
 		this.defaultValue = defaultValue;
 	}

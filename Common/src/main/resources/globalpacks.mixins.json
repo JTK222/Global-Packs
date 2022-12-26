@@ -2,16 +2,24 @@
 	"required": true,
 	"package": "net.dark_roleplay.gdarp.mixin",
 	"compatibilityLevel": "JAVA_17",
-	"refmap": "globaldataandresourcepacks.refmap.json",
+	"refmap": "globalpacks.refmap.json",
 	"mixins": [
-		"DedicatedServerPackFinderMixin",
+		"BootstrapHook",
 		"PackConfigurationMixin",
-		"BootstrapHook"
+		"PackRepositoryMixin",
+		"accessors.PackRepositoryAccessor",
+		"accessors.FolderRepositorySourceAccessor",
+		"accessors.DataPackConfigAccessor"
 	],
 	"client": [
 		"ClientPackFinderMixin",
 		"WorldOpenFlowFinderMixin",
 		"WorldGenPackFinderMixin"
+	],
+	"disabled": [
+		"DedicatedServerPackFinderMixin",
+		"PackConfigurationMixin",
+		"ClientPackFinderMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

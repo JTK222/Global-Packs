@@ -12,12 +12,12 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(WorldOpenFlows.class)
 public class WorldOpenFlowFinderMixin {
 
-	@ModifyArg(
-			method = "createPackRepository",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>(Lnet/minecraft/server/packs/PackType;[Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
-			index = 1
-	)
-	private static RepositorySource[] addClientPackFinder2(RepositorySource[] arg) {
-		return ArrayUtils.addAll(arg, CommonClass.getRepositorySource(PackType.SERVER_DATA, true), CommonClass.getRepositorySource(PackType.SERVER_DATA, false));
-	}
+//	@ModifyArg(
+//			method = "createPackRepository",
+//			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>(Lnet/minecraft/server/packs/PackType;[Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
+//			index = 1
+//	)
+//	private static RepositorySource[] globalpacks_addClientPackFinder2(RepositorySource[] arg) {
+//		return ArrayUtils.addAll(arg, CommonClass.getRepositorySource(PackType.SERVER_DATA, true), CommonClass.getRepositorySource(PackType.SERVER_DATA, false));
+//	}
 }

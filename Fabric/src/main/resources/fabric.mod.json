@@ -1,7 +1,7 @@
 {
    "schemaVersion": 1,
    "license": "ARR",
-   "id": "globaldataandresourcepacks",
+   "id": "globalpacks",
    "version": "${version}",
   
    "name": "Global Data- & Resourcepacks",
@@ -18,7 +18,7 @@
    "environment": "*",
    "entrypoints": {},
    "mixins": [
-      "globaldataandresourcepacks.mixins.json"
+      "globalpacks.mixins.json"
    ],
    "depends": {
       "minecraft": ">=1.19",

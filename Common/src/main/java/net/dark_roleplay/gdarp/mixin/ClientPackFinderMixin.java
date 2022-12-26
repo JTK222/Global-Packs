@@ -18,10 +18,10 @@ public class ClientPackFinderMixin {
 
 	@ModifyArg(
 			method = "<init>",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>(Lnet/minecraft/server/packs/repository/Pack$PackConstructor;[Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
-			index = 1
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>([Lnet/minecraft/server/packs/repository/RepositorySource;)V"),
+			index = 0
 	)
-	private RepositorySource[] addClientPackFinder(RepositorySource[] arg) {
+	private RepositorySource[] globalpacks_addClientPackFinder(RepositorySource[] arg) {
 		return ArrayUtils.addAll(arg, CommonClass.getRepositorySource(PackType.CLIENT_RESOURCES, true), CommonClass.getRepositorySource(PackType.CLIENT_RESOURCES, false));
 	}
 }

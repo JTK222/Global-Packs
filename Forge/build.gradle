@@ -133,7 +133,7 @@ curseforge{
         changelogType = 'markdown'
         if(new File("../", "Changelog.md").exists())
             changelog = new File("../", "Changelog.md").text
-        addGameVersion project.minecraft_version
+        Arrays.asList(project.findProperty('curse_versions').toString().split(",")).forEach(version -> addGameVersion(version));
         addGameVersion 'Forge'
 
         mainArtifact(jar) {
