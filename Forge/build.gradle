@@ -102,7 +102,7 @@ jar.finalizedBy('reobfJar')
 jar {
     manifest {
         attributes([
-            "MixinConfigs" : "globaldataandresourcepacks.mixins.json"
+            "MixinConfigs" : "globalpacks.mixins.json"
         ])
     }
 }
@@ -156,12 +156,15 @@ modrinth {
     uploadFile = jar
     gameVersions = Arrays.asList(project.findProperty('modrinth_versions').toString().split(","))
     loaders = ["forge"]
+
+    if(new File("../", "Changelog.md").exists())
+        changelog = new File("../", "Changelog.md").text
 }
 
-task publishEverywhere {
-    dependsOn 'clean'
-    dependsOn 'curseforge'
-    dependsOn 'modrinth'
-    tasks.findByName('curseforge').mustRunAfter 'clean'
-    tasks.findByName('modrinth').mustRunAfter 'clean'
+task publishEverywhere(type: GradleBuild) {
+    tasks = [
+        'clean',
+        'modrinth',
+        'curseforge'
+    ]
 }

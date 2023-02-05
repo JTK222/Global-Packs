@@ -1,5 +1,5 @@
 modLoader="lowcodefml" #mandatory
-loaderVersion="[41,)" #mandatory
+loaderVersion="[44,)" #mandatory
 license="All rights reserved"
 
 [[mods]] #mandatory
@@ -12,6 +12,6 @@ Allows modpacks to add Datapacks & Resource Packs
 [[dependencies.globalpacks]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19,)"
+    versionRange="[1.19.3,)"
     ordering="NONE"
     side="BOTH"

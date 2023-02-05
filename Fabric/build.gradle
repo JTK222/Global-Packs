@@ -115,12 +115,15 @@ modrinth {
     uploadFile = remapJar
     gameVersions = Arrays.asList(project.findProperty('modrinth_versions').toString().split(","))
     loaders = ["fabric"]
+
+    if(new File("../", "Changelog.md").exists())
+        changelog = new File("../", "Changelog.md").text
 }
 
-task publishEverywhere {
-    dependsOn 'clean'
-    dependsOn 'curseforge'
-    dependsOn 'modrinth'
-    tasks.findByName('curseforge').mustRunAfter 'clean'
-    tasks.findByName('modrinth').mustRunAfter 'clean'
+task publishEverywhere(type: GradleBuild) {
+    tasks = [
+            'clean',
+            'modrinth',
+            'curseforge'
+    ]
 }

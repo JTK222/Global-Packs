@@ -49,7 +49,14 @@ subprojects {
     // metadata includes mapped dependencies which are not reasonably consumable by
     // other mod developers.
     tasks.withType(GenerateModuleMetadata) {
-
         enabled = false
     }
+}
+
+task publishEverywhere(type: GradleBuild) {
+    tasks = [
+            'Fabric:publishEverywhere',
+            'Quilt:publishEverywhere',
+            'Forge:publishEverywhere',
+    ]
 }
