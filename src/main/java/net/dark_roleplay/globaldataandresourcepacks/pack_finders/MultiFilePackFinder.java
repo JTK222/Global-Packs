@@ -4,9 +4,7 @@ import net.minecraft.resources.*;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -21,21 +19,23 @@ public class MultiFilePackFinder implements IPackFinder {
 					(pack.isDirectory() && (new File(pack, "pack.mcmeta")).isFile() && (new File(pack, "data/")).exists());
 
 	private final boolean shouldForcePacks;
+	private final List<File> packsOrder;
 	private final Map<File, FilePackType> packs;
 	private final IPackNameDecorator packSource;
 	private final ResourcePackType packType;
 
-	public MultiFilePackFinder(boolean shouldForcePacks, ResourcePackType packType, IPackNameDecorator packSource, Set<File> files) {
+	public MultiFilePackFinder(boolean shouldForcePacks, ResourcePackType packType, IPackNameDecorator packSource, List<File> files) {
 		this.shouldForcePacks = shouldForcePacks;
 		this.packSource = packSource;
 		this.packs = new HashMap<>();
 		this.packType = packType;
 		for (File file : files)
 			this.packs.put(file, FilePackType.MISSING);
+		this.packsOrder = files;
 	}
 
 	private void updatePacks() {
-		for (File file : this.packs.keySet()) {
+		for (File file : this.packsOrder) {
 			if (file.isFile() && file.getPath().endsWith(".zip"))
 				packs.put(file, FilePackType.ZIPED_PACK);
 			else if (file.isDirectory() && new File(file, "pack.mcmeta").exists())
@@ -52,7 +52,9 @@ public class MultiFilePackFinder implements IPackFinder {
 	public void loadPacks(Consumer<ResourcePackInfo> packConsumer, ResourcePackInfo.IFactory packBuilder) {
 		updatePacks();
 
-		for (File file : this.packs.keySet()) {
+		int packId = 0;
+
+		for (File file : this.packsOrder) {
 			FilePackType type = this.packs.get(file);
 
 			ResourcePackInfo pack = null;
@@ -61,7 +63,7 @@ public class MultiFilePackFinder implements IPackFinder {
 				case UNZIPED_PACK:
 				case ZIPED_PACK:
 					pack = ResourcePackInfo.create(
-							"global:" + file.getName(), this.shouldForcePacks,
+								String.format("global:%03d:%s", packId, file.getName()), this.shouldForcePacks,
 							createSupplier(file),
 							packBuilder, ResourcePackInfo.Priority.TOP, this.packSource
 					);
@@ -73,7 +75,7 @@ public class MultiFilePackFinder implements IPackFinder {
 					if (afile != null)
 						for (File packFile : afile) {
 							pack = ResourcePackInfo.create(
-									"global:" + packFile.getName(), this.shouldForcePacks,
+									String.format("global:%03d:%s", packId, file.getName()), this.shouldForcePacks,
 									createSupplier(packFile),
 									packBuilder, ResourcePackInfo.Priority.TOP, this.packSource);
 							if (pack != null) {
@@ -85,6 +87,7 @@ public class MultiFilePackFinder implements IPackFinder {
 				default:
 					break;
 			}
+			packId++;
 		}
 	}
 
