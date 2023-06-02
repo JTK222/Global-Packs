@@ -54,21 +54,23 @@ public class MultiFilePackFinder implements RepositorySource {
 	};
 
 	private final boolean shouldForcePacks;
+	private final List<Path> packsOrder;
 	private final Map<Path, FilePackType> packs;
 	private final PackSource packSource;
 	private final PackType packType;
 
-	public MultiFilePackFinder(boolean shouldForcePacks, PackType packType, PackSource packSource, Set<Path> files) {
+	public MultiFilePackFinder(boolean shouldForcePacks, PackType packType, PackSource packSource, List<Path> files) {
 		this.shouldForcePacks = shouldForcePacks;
 		this.packSource = packSource;
 		this.packs = new HashMap<>();
 		this.packType = packType;
 		for (Path file : files)
 			this.packs.put(file, FilePackType.MISSING);
+		this.packsOrder = files;
 	}
 
 	private void updatePacks() {
-		for (Path file : this.packs.keySet()) {
+		for (Path file : this.packsOrder) {
 			if (Files.isRegularFile(file) && file.endsWith(".zip"))
 				packs.put(file, FilePackType.ZIPED_PACK);
 			else if (Files.isDirectory(file) && Files.exists(file.resolve("pack.mcmeta")))
@@ -89,7 +91,7 @@ public class MultiFilePackFinder implements RepositorySource {
 	public void loadPacks(Consumer<Pack> packConsumer, Pack.PackConstructor packBuilder) {
 		updatePacks();
 
-		for (Path file : this.packs.keySet()) {
+		for (Path file : this.packsOrder) {
 			FilePackType type = this.packs.get(file);
 
 			Pack pack = null;

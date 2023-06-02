@@ -41,7 +41,7 @@ public class CommonClass {
 	}
 
 	public static MultiFilePackFinder getRepositorySource(PackType type, boolean force) {
-		Set<Path> files = new HashSet<>();
+		List<Path> files = new ArrayList<>();
 
 		Optional<List<String>> packFolders = switch (type){
 			case CLIENT_RESOURCES -> force ? PackConfig.getRequiredResourceacks() : PackConfig.getOptionalResourceacks();
