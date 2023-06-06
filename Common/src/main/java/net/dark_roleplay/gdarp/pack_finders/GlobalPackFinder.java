@@ -1,5 +1,6 @@
 package net.dark_roleplay.gdarp.pack_finders;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -16,6 +17,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -61,13 +63,13 @@ public class GlobalPackFinder implements RepositorySource {
 
 	private final PackType packType;
 	private final boolean forcedPacks;
-	private final ImmutableSet<Path> packLocations;
+	private final ImmutableList<Path> packLocations;
 
 
-	public GlobalPackFinder(PackType packType, boolean required, Set<Path> packLocations) {
+	public GlobalPackFinder(PackType packType, boolean required, List<Path> packLocations) {
 		this.packType = packType;
 		this.forcedPacks = required;
-		this.packLocations = ImmutableSet.copyOf(packLocations);
+		this.packLocations = ImmutableList.<Path>builder().addAll(packLocations).build();
 	}
 
 	@Override

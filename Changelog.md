@@ -1,3 +1,7 @@
+## 1.15.4 for 1.19.3
+**IMPORTANT SECURITY UPDATE**
+* This fixes an important security issue, update asap. The issue will be revealed in 1-2 months.
+
 ### Global Packs 1.15.3 for Minecraft 1.19.3
 (Fix) Fixed optional datapacks, not being optional.
 
