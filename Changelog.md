@@ -1,3 +1,8 @@
+## 1.12.4
+**IMPORTANT SECURITY UPDATE**
+* This fixes an important security issue, update asap. The issue will be revealed in 1-2 months.
+
+
 **v1.12.3**
 + Minor rework, now datapacks properly overwrite mod datapacks
 
