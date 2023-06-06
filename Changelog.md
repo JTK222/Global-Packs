@@ -1,3 +1,7 @@
+## 1.14.5 for 1.19-1.19.2
+**IMPORTANT SECURITY UPDATE**
+* This fixes an important security issue, update asap. The issue will be revealed in 1-2 months.
+
 ### 1.14.1 for 1.19+
 \* Fixed world gen Datapacks not loading properly on some versions of Forge.  
 This might also improve reliability on Fabric and Quilt.  
