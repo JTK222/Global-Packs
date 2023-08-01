@@ -1,5 +1,5 @@
 modLoader="lowcodefml" #mandatory
-loaderVersion="[44,45]" #mandatory
+loaderVersion="[44,)" #mandatory
 license="All rights reserved"
 
 [[mods]] #mandatory

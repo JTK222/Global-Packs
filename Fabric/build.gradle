@@ -54,7 +54,7 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     source(project(":Common").sourceSets.main.allSource)
 }
 
@@ -120,7 +120,7 @@ modrinth {
         changelog = new File("../", "Changelog.md").text
 }
 
-task publishEverywhere(type: GradleBuild) {
+tasks.register('publishEverywhere', GradleBuild) {
     tasks = [
             'clean',
             'modrinth',
