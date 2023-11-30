@@ -1,11 +1,17 @@
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '1.2-SNAPSHOT'
     id 'maven-publish'
     id "com.matthewprenger.cursegradle" version "1.4.0"
     id "com.modrinth.minotaur" version "2.+"
+    id "me.modmuss50.mod-publish-plugin"
 }
 
-archivesBaseName = "${mod_file_name}-fabric-${minecraft_version}"
+def ENV = System.getenv()
+
+base {
+    archivesName = "${mod_id}-fabric"
+}
+
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
@@ -81,49 +87,28 @@ publishing {
     }
 }
 
-curseforge{
-    apiKey = project.findProperty('curse_auth')
-    project{
-        id = project.findProperty('curse_project')
-        releaseType = project.findProperty('curse_release_type_fabric')
-        changelogType = 'markdown'
-        if(new File("../", "Changelog.md").exists())
-            changelog = new File("../", "Changelog.md").text
-
-        Arrays.asList(project.findProperty('curse_versions').toString().split(",")).forEach(version -> addGameVersion(version));
-        addGameVersion 'Fabric'
-
-        mainArtifact(remapJar) {
-            displayName = "$project.ext.mod_name - Fabric - $project.ext.minecraft_version - v$project.version"
-        }
-
-        afterEvaluate{
-            uploadTask.dependsOn(remapJar)
-        }
-        options{
-            forgeGradleIntegration = false;
-        }
-    }
-}
-
-modrinth {
-    token = project.findProperty('modrinth_auth')
-    projectId = project.findProperty('modrinth_project')
-    versionType = project.findProperty('modrinth_release_type_fabric')
-    versionName = "$project.ext.mod_name - v${version}"
-    version = "${version}_fabric"
-    uploadFile = remapJar
-    gameVersions = Arrays.asList(project.findProperty('modrinth_versions').toString().split(","))
-    loaders = ["fabric"]
+publishMods {
+    file = remapJar.archiveFile
 
     if(new File("../", "Changelog.md").exists())
-        changelog = new File("../", "Changelog.md").text
-}
+        changelog = new File("./../", "Changelog.md").text
+    else changelog = ""
 
-tasks.register('publishEverywhere', GradleBuild) {
-    tasks = [
-            'clean',
-            'modrinth',
-            'curseforge'
-    ]
+    type = STABLE
+    modLoaders.add("fabric")
+
+    displayName = "$project.ext.mod_name - Fabric ${minecraft_version} - v${simple_version}"
+
+    curseforge {
+        projectId = curse_project
+        projectSlug = curse_slug // Required for discord webhook
+        accessToken = ENV.CURSE_PAT
+        minecraftVersions.add("1.20.2")
+    }
+
+    modrinth {
+        projectId = modrinth_project
+        accessToken = ENV.MODRINTH_PAT
+        minecraftVersions.add("1.20.2")
+    }
 }

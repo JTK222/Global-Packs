@@ -29,52 +29,60 @@ public class PackConfig {
 
 	public static void loadConfigs() {
 		if (hasLoadedConfig) return;
-		if(Files.notExists(CommonClass.getGameDir().resolve("config").resolve("global_data_and_resourcepacks.toml"))){
-			try {
+		try {
+			boolean useOldConfig = false;
+
+			String oldConfig = "global_data_and_resourcepacks.toml";
+			String newConfig = "global_packs.toml";
+
+			useOldConfig = Files.exists(CommonClass.getGameDir().resolve("config").resolve(oldConfig));
+
+			if(!useOldConfig && Files.notExists(CommonClass.getGameDir().resolve("config").resolve(newConfig))){
 				Files.createDirectories(new File(CommonClass.getGameDir().toFile(), "/config/").toPath());
-			} catch (IOException e) {
-				e.printStackTrace();
+
+				//Kinda redunand as that's for server configs... so let's get rid of it.
+//				Path forgeDefaultCfgPath = CommonClass.getGameDir().resolve("defaultconfigs").resolve(useOldConfig ? oldConfig : newConfig);
+//				if(Files.exists(forgeDefaultCfgPath)){
+//					try {
+//						Files.copy(forgeDefaultCfgPath, CommonClass.getGameDir().resolve("config/" + newConfig));
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}
 
-			Path forgeDefaultCfgPath = CommonClass.getGameDir().resolve("defaultconfigs").resolve("global_data_and_resourcepacks.toml");
-			if(Files.exists(forgeDefaultCfgPath)){
-				try {
-					Files.copy(forgeDefaultCfgPath, CommonClass.getGameDir().resolve("config/global_data_and_resourcepacks.toml"));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			CommentedFileConfig config = CommentedFileConfig
+					.builder(new File(CommonClass.getGameDir().toFile(), "/config/" + (useOldConfig ? oldConfig : newConfig)))
+					.defaultData(PackConfig.class.getClassLoader().getResource("default_config.toml"))
+					.build();
+
+			config.load();
+
+
+			ENABLE_SYSTEM_GLOBAL = config.getOptional("enable_system_global_packs");
+			boolean enableSystemGlobal = ENABLE_SYSTEM_GLOBAL.orElse(false);
+
+			REQUIRED_DATAPACKS = config.getOptional("datapacks.required");
+			OPTIONAL_DATAPACKS = config.getOptional("datapacks.optional");
+			REQUIRED_RESOURCEPACKS = config.getOptional("resourcepacks.required");
+
+			if(enableSystemGlobal){
+				String userHome = System.getProperty("user.home");
+				SYSTEM_GLOBAL_PATH = Path.of(userHome, ".minecraft_global_packs");
+
+				REQUIRED_DATAPACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("required_datapacks").toFile().getPath()));
+				OPTIONAL_DATAPACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("optional_datapacks").toFile().getPath()));
+				REQUIRED_RESOURCEPACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("required_resourcepacks").toFile().getPath()));
+				OPTIONAL_RESOURCEPACKS = Optional.of(Arrays.asList(SYSTEM_GLOBAL_PATH.resolve("optional_resourcepacks").toFile().getPath()));
+			}else{
+				OPTIONAL_RESOURCEPACKS = Optional.empty();
 			}
+
+			config.close();
+			hasLoadedConfig = true;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
-		CommentedFileConfig config = CommentedFileConfig
-				.builder(new File(CommonClass.getGameDir().toFile(), "/config/global_data_and_resourcepacks.toml"))
-				.defaultData(PackConfig.class.getClassLoader().getResource("default_config.toml"))
-				.build();
-
-		config.load();
-
-
-		ENABLE_SYSTEM_GLOBAL = config.getOptional("enable_system_global_packs");
-		boolean enableSystemGlobal = ENABLE_SYSTEM_GLOBAL.orElse(false);
-
-		REQUIRED_DATAPACKS = config.getOptional("datapacks.required");
-		OPTIONAL_DATAPACKS = config.getOptional("datapacks.optional");
-		REQUIRED_RESOURCEPACKS = config.getOptional("resourcepacks.required");
-
-		if(enableSystemGlobal){
-			String userHome = System.getProperty("user.home");
-			SYSTEM_GLOBAL_PATH = Path.of(userHome, ".minecraft_global_packs");
-
-			REQUIRED_DATAPACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("required_datapacks").toFile().getPath()));
-			OPTIONAL_DATAPACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("optional_datapacks").toFile().getPath()));
-			REQUIRED_RESOURCEPACKS.ifPresent(packs -> packs.add(SYSTEM_GLOBAL_PATH.resolve("required_resourcepacks").toFile().getPath()));
-			OPTIONAL_RESOURCEPACKS = Optional.of(Arrays.asList(SYSTEM_GLOBAL_PATH.resolve("optional_resourcepacks").toFile().getPath()));
-		}else{
-			OPTIONAL_RESOURCEPACKS = Optional.empty();
-		}
-
-		config.close();
-		hasLoadedConfig = true;
 	}
 
 	public static void createFolders(){

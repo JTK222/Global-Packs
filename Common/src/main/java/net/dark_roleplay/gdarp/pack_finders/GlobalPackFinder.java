@@ -2,9 +2,11 @@ package net.dark_roleplay.gdarp.pack_finders;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import net.dark_roleplay.gdarp.Constants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.FilePackResources;
+import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.linkfs.LinkFileSystem;
@@ -70,11 +72,16 @@ public class GlobalPackFinder implements RepositorySource {
 		this.packType = packType;
 		this.forcedPacks = required;
 		this.packLocations = ImmutableList.<Path>builder().addAll(packLocations).build();
+		Constants.LOG.info("Created {} GlobalPackFinder for '{}' with the following pack locations:", required ? "forced" : "optional", packType == PackType.SERVER_DATA ? "server side" : "client side");
+		for(Path p : packLocations)
+			Constants.LOG.info(p.toString());
+
 	}
 
 	@Override
 	public void loadPacks(Consumer<Pack> packRegistrar) {
 		discoverResourcePacks(path -> {
+			Constants.LOG.info("Loading {} {} pack at: '{}'", this.forcedPacks ? "forced" : "optional", packType == PackType.SERVER_DATA ? "data" : "resource", path);
 			Pack.ResourcesSupplier resourceSupplier = null;
 			if (Files.isRegularFile(path) && path.toString().endsWith(".zip"))
 				resourceSupplier = createFilePack(path);
@@ -104,7 +111,7 @@ public class GlobalPackFinder implements RepositorySource {
 
 
 		if (fs == FileSystems.getDefault() || fs instanceof LinkFileSystem)
-			return (needle) -> new FilePackResources(needle, path.toFile(), false);
+			return new FilePackResources.FileResourcesSupplier(path.toFile(), false);
 
 		return null;
 }
@@ -113,12 +120,12 @@ public class GlobalPackFinder implements RepositorySource {
 		if (this.packType == PackType.CLIENT_RESOURCES && !IS_VALID_RESOURCE_PACK.test(path)) return null;
 		if (this.packType == PackType.SERVER_DATA && !IS_VALID_DATA_PACK.test(path)) return null;
 
-		return (needle) -> new PathPackResources(needle, path, false);
+		return new PathPackResources.PathResourcesSupplier( path, false);
 	}
 
 	private void discoverResourcePacks(Consumer<Path> packCallback) {
 		for (Path path : this.packLocations) {
-			if (Files.isDirectory(path)) {
+			if (Files.isDirectory(path) || Files.notExists(path)) {
 				if (Files.isRegularFile(path.resolve("pack.mcmeta"))) {
 					packCallback.accept(path);
 					continue;
